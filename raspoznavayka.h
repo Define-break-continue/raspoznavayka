@@ -6,6 +6,11 @@
  * of interval structures, representing melodies.
  */
 #define _mel_size_t uint16_t
+/*
+ * up & down arrows for CHash
+ */
+#define _arrow_up 1
+#define _arrow_down 0
 
 #define __NIX__
 #include <iostream>
