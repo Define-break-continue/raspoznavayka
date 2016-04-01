@@ -15,5 +15,7 @@ private:
     std::string hash_file_subdir;
     int id3_file_max_size_koeff;
     int mel_file_max_size_koeff;
+    int mel_max_size_koeff;
+    int mel_number_size_koeff;
 };
 

@@ -12,11 +12,13 @@
 #include <fstream>
 #include <cstdint>
 #include <assert.h>
-#include "CDataBase.h"
+#include <vector>
 #include "CMelody.h"
+#include "CHash.h"
+#include "CFixedHash.h"
 #include "CInDBMelody.h"
 #include "CHashMatch.h"
-#include "CFixedHash.h"
+#include "CDataBase.h"
 
 #endif // RASPOZNAVAYKA_HEADER
 
