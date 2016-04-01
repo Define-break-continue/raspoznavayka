@@ -1,14 +1,11 @@
-#ifndef __MELODY_
-#define __MELODY_
-
-#include <iostream>
-#include <string>
-#include <vector>
 #include "aquila/aquila.h"
 #include "aquila/transform/FftFactory.h"
 
-#include "interval_t.h"
-#include "raspoznavayka.h"
+/*
+ * _mel_size_t is a type to store length and offsets
+ * of interval structures, representing melodies.
+ */
+#define _mel_size_t uint16_t
 
 class CMelody {
     public:
@@ -23,4 +20,3 @@ class CMelody {
     void setIntervals( Aquila::WaveType waveform );
 };
 
-#endif // __MELODY_
