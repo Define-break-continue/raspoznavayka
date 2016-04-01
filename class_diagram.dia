@@ -1236,7 +1236,7 @@
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>#needed to know max offset to use to make all possible FixedHash'es from a Hash or a Melody#</dia:string>
+            <dia:string>#needed to know max offset to use to make all possible FixedHash'es from a Hash or a Melody. Static!#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -1245,7 +1245,7 @@
             <dia:boolean val="false"/>
           </dia:attribute>
           <dia:attribute name="class_scope">
-            <dia:boolean val="false"/>
+            <dia:boolean val="true"/>
           </dia:attribute>
         </dia:composite>
       </dia:attribute>
