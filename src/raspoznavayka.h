@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <assert.h>
 #include <vector>
-#include "_interval_t.h"
+#include "interval_t.h"
 #include "CMelody.h"
 #include "CInDBMelody.h"
 #include "CHash.h"
