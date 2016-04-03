@@ -1,0 +1,3 @@
+class CInDBMelody : public CMelody {
+};
+
