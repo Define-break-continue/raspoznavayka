@@ -5,9 +5,10 @@
 #include <iostream>
 #include <fstream>
 #include <cstdint>
+#include <cstdlib>
 #include <assert.h>
 #include <vector>
-#include "interval_t.h"
+#include "_interval_t.h"
 #include "CMelody.h"
 #include "CInDBMelody.h"
 #include "CHash.h"
