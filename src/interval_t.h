@@ -1,4 +1,4 @@
-enum interval_t : char {
+enum interval_t {
     m2 = 1,
     M2,
     m3,
