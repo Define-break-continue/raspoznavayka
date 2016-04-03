@@ -82,5 +82,5 @@ enum _interval_t : char {
     dM3,
     dm3,
     dM2,
-    dm9
+    dm2
 };

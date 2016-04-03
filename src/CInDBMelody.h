@@ -1,15 +1,12 @@
-#include "CIDTag.h"
+//#include "CIDTag.h"
 
-class CInDBMelody : public CMelody {
+class CInDBMelody : CMelody {
 public:
-    template< typename waveformType, typename ... idParams >
-    CInDBMelody( waveformType waveform ) : CMelody( waveform ), idTag( idParams ) {} // хз, будет ли работать, но попробовать стоит
-    CInDBMelody( std::vector< _interval_t > intervals,
-                 std::string artist,
-                 std::string album,
-                 std::string title,
-                 uint8_t year );
+    CInDBMelody( std::vector< _interval_t > intervals ) : CMelody( intervals ), idTag() {} // no honey - no money
+    CInDBMelody( CRecordedMelody& melody ) : CMelody( melody.getIntervals() ), idTag() {} // if no data => zero idTag
+    CInDBMelody( std::vector< _interval_t > intervals, CIDTag& idTag ) : CMelody( intervals ), idTag( idTag ) {}
+    CInDBMelody( CRecordedMelody& melody, CIDTag& idTag ) : CMelody( melody.getIntervals() ), idTag( idTag ) {}
+    CIDTag getIDTag();
 protected:
     CIDTag idTag;
 };
-
