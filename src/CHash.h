@@ -8,10 +8,6 @@ class CHash {
 public:
     CHash();
     CHash( std::vector< interval_t > intervals );
-    CHash( const CMelody& );
-    CHash( const CInDBMelody& ); // ?? хочется вызывать CHash( const CMelody& ) для CInDBMelody, CRecordedMelody
-                                 // и прочих потомков CMelody не задумываясь о типах. Надо спросить как...
-                                 // а пока no known conversion for argument 1 from ‘CInDBMelody’ to ‘const CMelody&’
     CHash getHash();
     _mel_size_t getLength();
 protected:

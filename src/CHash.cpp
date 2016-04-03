@@ -10,11 +10,11 @@ CHash::CHash( std::vector< interval_t > intervals ) {
 
 ~CHash() {}
 
-std::vector< _arrow_t > CHash::getHash() {
+std::vector< arrow_t > CHash::getHash() {
     return arrows;
 }
 
-_arrow_t sg( auto x ) {
+arrow_t sg( auto x ) {
     return ( x > 0 ) ? 1 : ( ( x < 0 ) ? -1 : 0 );
 }
 

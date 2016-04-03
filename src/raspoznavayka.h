@@ -9,9 +9,9 @@
 #include <vector>
 #include "interval_t.h"
 #include "CMelody.h"
-#include "CInDBMelody.h"
 #include "CHash.h"
 #include "CFixedHash.h"
+#include "CInDBMelody.h"
 #include "CHashMatch.h"
 #include "CDataBase.h"
 
