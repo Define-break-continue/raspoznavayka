@@ -5,18 +5,18 @@
  * _mel_size_t is a type to store length and offsets
  * of interval structures, representing melodies.
  */
-typedef std::uint16_t _mel_size_t;
+#define _mel_size_t uint16_t
 
 class CMelody {
     public:
-    CMelody( std::vector< Aquila::SampleType > );
-    CMelody( Aquila::WaveFile );
-    CMelody( std::vector< _interval_t > intervals ) : intervals( intervals ) {}
+    CMelody( std::vector< double > waveform );
+//    CMelody( std::vector< Aquila::SampleType > waveform );
+//    CMelody( Aquila::WaveType waveform );
     std::vector< _interval_t > getIntervals();
     _mel_size_t getLength();
     
     protected:
     std::vector< _interval_t > intervals;
-    void setIntervals( Aquila::WaveFile );
+//    void setIntervals( Aquila::WaveType waveform );
 };
 
