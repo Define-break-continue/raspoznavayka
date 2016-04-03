@@ -7,7 +7,7 @@ typedef std::int8_t _arrow_t;
 class CHash {
 public:
     CHash();
-    CHash( std::vector< _interval_t > intervals );
+    CHash( std::vector< interval_t > intervals );
     CHash( const CMelody& );
     CHash( const CInDBMelody& ); // ?? хочется вызывать CHash( const CMelody& ) для CInDBMelody, CRecordedMelody
                                  // и прочих потомков CMelody не задумываясь о типах. Надо спросить как...
@@ -15,7 +15,7 @@ public:
     CHash getHash();
     _mel_size_t getLength();
 protected:
-    void setHash( std::vector< _interval_t > intervals );
+    void setHash( std::vector< interval_t > intervals );
     std::vector< _arrow_t > arrows;
 };
 

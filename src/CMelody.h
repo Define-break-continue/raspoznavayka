@@ -12,11 +12,11 @@ class CMelody {
     CMelody( std::vector< double > waveform );
 //    CMelody( std::vector< Aquila::SampleType > waveform );
 //    CMelody( Aquila::WaveType waveform );
-    std::vector< _interval_t > getIntervals();
+    std::vector< interval_t > getIntervals();
     _mel_size_t getLength();
     
     protected:
-    std::vector< _interval_t > intervals;
+    std::vector< interval_t > intervals;
 //    void setIntervals( Aquila::WaveType waveform );
 };
 
