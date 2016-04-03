@@ -1,7 +1,7 @@
 class CDataBase {
 public:
     static const CDataBase getInstance();
-    std::vector<CHashMatch> searchByHash( CFixedHash fixed_hash );
+    std::vector< CHashMatch > searchByHash( CFixedHash fixed_hash );
     bool addMelody( CInDBMelody melody );
 private:
     CDataBase();
