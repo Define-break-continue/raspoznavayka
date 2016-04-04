@@ -82,5 +82,5 @@ enum interval_t {
     dM3,
     dm3,
     dM2,
-    dm9
+    dm2
 };

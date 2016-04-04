@@ -7,11 +7,19 @@ typedef std::int8_t _arrow_t;
 class CHash {
 public:
     CHash();
-    CHash( std::vector< interval_t > intervals );
+    template< typename CGeneralMelody >
+        CHash( const CGeneralMelody& ); // CHash constructor for all Melody classes
+    CHash( std::vector< _interval_t > );
+/* TODO DELETE THIS:
+ *    CHash( const CMelody& );
+ *    CHash( const CInDBMelody& ); // ?? хочется вызывать CHash( const CMelody& ) для CInDBMelody, CRecordedMelody
+ *                                // и прочих потомков CMelody не задумываясь о типах. Надо спросить как...
+ *                               // а пока no known conversion for argument 1 from ‘CInDBMelody’ to ‘const CMelody&’
+ */
     CHash getHash();
     _mel_size_t getLength();
 protected:
-    void setHash( std::vector< interval_t > intervals );
+    void setHash( std::vector< _interval_t > );
     std::vector< _arrow_t > arrows;
 };
 
