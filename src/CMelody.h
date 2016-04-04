@@ -10,13 +10,13 @@
 class CMelody {
     public:
     CMelody( std::vector< double > waveform );
-    CMelody( std::vector< Aquila::SampleType > waveform );
-    CMelody( Aquila::WaveType waveform );
-    std::vector< interval_t > getIntervals();
+//    CMelody( std::vector< Aquila::SampleType > waveform );
+//    CMelody( Aquila::WaveType waveform );
+    std::vector< _interval_t > getIntervals();
     _mel_size_t getLength();
     
     protected:
-    std::vector< interval_t > intervals;
-    void setIntervals( Aquila::WaveType waveform );
+    std::vector< _interval_t > intervals;
+//    void setIntervals( Aquila::WaveType waveform );
 };
 
