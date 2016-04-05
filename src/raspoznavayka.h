@@ -9,10 +9,13 @@
 #include <assert.h>
 #include <vector>
 #include <string>
+#include <typeinfo>
 
 #include "aquila/global.h"
 #include "aquila/transform/FftFactory.h"
 #include "aquila/source/WaveFile.h"
+
+#include "CInputAudio.h"
 
 #include "interval_t.h"
 #include "CMelody.h"
