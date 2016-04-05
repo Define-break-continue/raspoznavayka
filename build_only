@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cmake src/ build/
+cd build/
+make
+
+cd ..
+echo "Build completed successfully\n\n"
