@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cmake src/ build/
-cd build/
+cmake ~/Documents/Raspoznavaika/raspoznavayka/src/ ~/Documents/Raspoznavaika/raspoznavayka/build/
+cd ~/Documents/Raspoznavaika/raspoznavayka/build/
 make
 
 cd ..
-echo "Build completed successfully\n\n"
+echo "End of script"

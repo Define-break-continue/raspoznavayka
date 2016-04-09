@@ -1,10 +1,11 @@
 #include "raspoznavayka.h"
 
 int main() {
-
-    CInputAudio inputAudio = CInputAudio("test.wav");
+    std::string a = "/home/ivan/Documents/Raspoznavaika/raspoznavayka/build/test.wav";
+    CInputAudio inputAudio = CInputAudio(a);
     auto samples = inputAudio.getSignal();
-    for ( int i = 0; i < samples.size(); ++i )
+    std::cout << std::endl << std::endl;
+    for ( int i = 0; i < 100/*samples.size()*/; ++i )
         std::cout << samples[ i ] << ' ';
     std::cout << std::endl;
 

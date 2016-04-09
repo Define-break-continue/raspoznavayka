@@ -1,3 +1,8 @@
 #!/bin/bash
 
-build/raspoznavayka
+cmake ~/Documents/Raspoznavaika/raspoznavayka/src/ ~/Documents/Raspoznavaika/raspoznavayka/build/
+cd ~/Documents/Raspoznavaika/raspoznavayka/build/
+make
+
+cd ..
+~/Documents/Raspoznavaika/raspoznavayka/build/raspoznavayka

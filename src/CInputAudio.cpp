@@ -1,6 +1,6 @@
 #include "CInputAudio.h"
 
-CInputAudio::CInputAudio( std::string fileDest = "test.wav" ) : signal( 0 ) { 
+CInputAudio::CInputAudio( std::string fileDest ) : signal( 0 ) { 
     ReadAudioHelper( fileDest );
 }
 
@@ -8,7 +8,7 @@ std::vector< Aquila::SampleType > CInputAudio::getSignal() {
     return signal;
 }
 
-void CInputAudio::ReadAudioHelper( std::string fileDest ) { 
+void CInputAudio::ReadAudioHelper( std::string fileDest ) {
     Aquila::WaveFile wav( fileDest );
     std::cout << "Loaded file: " << wav.getFilename()
               << " (" << wav.getBitsPerSample() << "b)" << std::endl;
