@@ -12,7 +12,7 @@ class CRecordedMelody : public CMelody {
 
     protected:
     CHash hash;
-    void setHash( Aquila::WaveFile wavefile );
+    void setHash( std::vector< Aquila::SampleType > );
 };
 
 #endif // __RECORDED_MELODY_

@@ -27,8 +27,8 @@ CDataBase::CDataBase() {
     id3_file_max_size_koeff = 4; // number of bytes in index file to store offsets of id3's by index
     mel_file_max_size_koeff = 4; // number of bytes in index file to store offsets of melodies by index
     mel_max_size_koeff = 2; // number of bytes to store a hash match offset of a melody for a hash
-                            // this koeff should be less or (better) equal to _mel_size_t
-    assert( sizeof( mel_max_size_koeff ) <= sizeof( _mel_size_t ) ); 
+                            // this koeff should be less or (better) equal to Raspoznavayka::mel_size_t
+    assert( sizeof( mel_max_size_koeff ) <= sizeof( Raspoznavayka::mel_size_t ) );
     mel_number_size_koeff = 4; // number of bytes to store a melody's index
     hash_file_extension = std::string( ".hash" );
     /*
@@ -65,10 +65,10 @@ bool CDataBase::addMelody( CInDBMelody melody ) {
     }
 
     // write melody
-    std::vector< _interval_t > mel_intervals = melody.getIntervals();
-    _mel_size_t mel_size = mel_intervals.size();
+    std::vector< Raspoznavayka::interval_t > mel_intervals = melody.getIntervals();
+    Raspoznavayka::mel_size_t mel_size = mel_intervals.size();
     char *mel_char_intervals = new char[mel_size];
-    for( std::vector< _interval_t >::size_type i = 0; i < mel_size; ++i ) {
+    for( std::vector< Raspoznavayka::interval_t >::size_type i = 0; i < mel_size; ++i ) {
         mel_char_intervals[i] = mel_intervals[i];
     }
     mel_file.write( mel_char_intervals, mel_size );
@@ -106,7 +106,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) {
 
     // iterate through the song's FixedHashes
     CHash hash( melody );
-    for( _mel_size_t offset = 0; offset < mel_size - CFixedHash::length; ++offset ) {
+    for( Raspoznavayka::mel_size_t offset = 0; offset < mel_size - CFixedHash::length; ++offset ) {
         CFixedHash fixed_hash( hash, offset );
         // open the appropriate hash file to write current fixed hash match to 
         std::ofstream hash_file;
@@ -226,7 +226,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
             std::cout << "ERROR: in mel file\n";
             break;
         }
-        CInDBMelody new_melody( std::vector< _interval_t >( intervals_char ), artist, album, name, std::atoi(year) );
+        CInDBMelody new_melody( std::vector< Raspoznavayka::interval_t >( intervals_char ), artist, album, name, std::atoi(year) );
         result.push_back( new_melody );
     } // hash file read cycle
     return result;
@@ -244,7 +244,7 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) {
         } else {
             pow *= 2;
         }
-        if( fixed_hash.arrows[CFixedHash::length - a - 1] == _arrow_up ) {
+        if( fixed_hash.arrows[CFixedHash::length - a - 1] == Raspoznavayka::arrow_up ) {
             res[ filename_length - a / 4 - 1 ] += pow;
         }
     }
