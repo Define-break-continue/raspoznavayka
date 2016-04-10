@@ -1,11 +1,10 @@
 namespace Raspoznavayka {
     typedef std::int8_t arrow_t;
     typedef arrow_t ArrowType;
+    const std::int8_t arrow_up = 1;
+    const std::int8_t arrow_equal = 0;
+    const std::int8_t arrow_down = -1;
 }
-
-#define _arrow_up 1
-#define _arrow_equal 0
-#define _arrow_down -1
 
 class CHash {
 public:
