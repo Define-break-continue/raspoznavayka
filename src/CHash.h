@@ -11,11 +11,11 @@ public:
     CHash();
     template< typename CGeneralMelody >
         CHash( const CGeneralMelody& ); // CHash constructor for all Melody classes
-    CHash( std::vector< Raspoznavayka::interval_t > );
-    CHash getHash();
+    CHash( std::vector< Raspoznavayka::interval_t >& );
+    std::vector< Raspoznavayka::arrow_t >& getHash();
     Raspoznavayka::MelodySizeType getLength();
 protected:
-    void setHash( std::vector< Raspoznavayka::interval_t > );
+    void setHash( std::vector< Raspoznavayka::interval_t >& );
     std::vector< Raspoznavayka::arrow_t > arrows;
 };
 

@@ -6,13 +6,13 @@
 
 class CRecordedMelody : public CMelody {
     public:
-    CRecordedMelody( std::vector< Aquila::SampleType > waveform ) : CMelody( waveform ), hash( 0 ) {}
-    CRecordedMelody( Aquila::WaveFile wavefile ) : CMelody( wavefile ), hash( 0 ) {}
-    CHash getHash();
+    CRecordedMelody( std::vector< Aquila::SampleType >& waveform ) : CMelody( waveform ), hash( 0 ) {}
+    CRecordedMelody( std::vector< Raspoznavayka::interval_t >& intervals ) : CMelody( intervals ), hash( 0 ) {}
+    CHash& getHash();
 
     protected:
     CHash hash;
-    void setHash( std::vector< Aquila::SampleType > );
+    void setHash();
 };
 
 #endif // __RECORDED_MELODY_

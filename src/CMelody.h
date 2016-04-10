@@ -13,14 +13,13 @@ namespace Raspoznavayka {
 
 class CMelody {
     public:
-    CMelody( std::vector< Aquila::SampleType > );
-    CMelody( Aquila::WaveFile );
-    CMelody( std::vector< Raspoznavayka::interval_t > intervals ) : intervals( intervals ) {}
-    std::vector< Raspoznavayka::interval_t > getIntervals();
+    CMelody( std::vector< Aquila::SampleType >& ) : intervals( 0 );
+    CMelody( std::vector< Raspoznavayka::interval_t >& intervals ) : intervals( intervals ) {}
+    std::vector< Raspoznavayka::interval_t >& getIntervals();
     Raspoznavayka::mel_size_t getLength();
     
     protected:
     std::vector< Raspoznavayka::interval_t > intervals;
-    void setIntervals( Aquila::WaveFile );
+    void setIntervals( std::vector< Aquila::SampleType >& );
 };
 
