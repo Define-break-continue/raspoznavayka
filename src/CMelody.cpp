@@ -1,5 +1,9 @@
 #include "CMelody.h"
 
+namespace Raspoznavayka {
+    typedef vector< vector < double > > Spectrogram;
+}
+
 CMelody::CMelody( std::vector< Aquila::SampleType >& waveform ) {
     setIntervals( waveform );
 }
@@ -14,7 +18,7 @@ Raspoznavayka::mel_size_t CMelody::getLength() {
 
 // helper functions
 
-// filter A coefficient based on frequency. For the proof-of-concept, a linear interpolation used
+// filter A coefficient based on frequency. For the proof-of-concept, a linear approximation used
 auto dL( Aquila::FrequencyType& f ) {
     double x1, x2, y1, y2;
     x1 = x2 = y1 = y2 = 0;
@@ -49,6 +53,25 @@ auto dL( Aquila::FrequencyType& f ) {
     return dl;
 }
 
-void CMelody:setIntervals( std::vector< Aquila::SampleType >& ) {
+Aquila::FrequencyType getFrequencyFromIteratorNumber( std::size_t i, std::size_t n ) {
+    return SAMPLE_RATE / n * i;
+}
+
+// real spectrogram in dB/1, filter A
+Raspoznavayka::Spectrogram getSpectrogram( const std::vector< Aquila::SampleType >& waveform ) {
+    Aquila::SignalSource signal( waveform, SAMPLE_RATE );
+    Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
+    Aquila::Spectrogram complexSpectrogram( frames );
+    Raspoznavayka::Spectrogram realSpectrogram( complexSpectrogram.getFrameCount(), vector< double >( complexSpectrogram.getSpectrumSize(), 0 ) );
+    for( std::size_t iF = 0; iF < complexSpectrogram.getSpectrumSize(); ++iF ) {
+        for( std::size_t it = 0; it < complexSpectrogram.getFrameCount(); ++it ) {
+            realSpectrogram[ it ][ iF ] = dB( complexSpectrogram.getPoint( it, iF ) )
+	        + dL( getFrequencyFromIteratorNumber( iF, complexSpectrogram.getSpectrumSize() ) );
+	}
+    }
+    return realSpectrogram;
+}
+
+void CMelody:setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     // TODO main code of physics part will be here
 }

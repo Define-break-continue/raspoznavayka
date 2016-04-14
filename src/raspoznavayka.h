@@ -2,6 +2,11 @@
 #define RASPOZNAVAYKA_HEADER
 
 #define __NIX__
+
+#define SAMPLE_RATE 11025
+#define SAMPLES_PER_FRAME 662
+#define SAMPLES_PER_OVERLAP 0
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>

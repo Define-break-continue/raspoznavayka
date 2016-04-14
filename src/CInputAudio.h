@@ -10,6 +10,7 @@ class CInputAudio {
     void ReadAudioHelper( std::string );
     protected:
     std::vector< Aquila::SampleType > signal;
+    void Resample( /**/ );
 };
 
 #endif // __INPUT_AUDIO_
