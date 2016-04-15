@@ -1,6 +1,8 @@
 #ifndef RASPOZNAVAYKA_HEADER
 #define RASPOZNAVAYKA_HEADER
 
+#pragma once
+
 #define __NIX__
 
 #define SAMPLE_RATE 11025
@@ -19,6 +21,10 @@
 #include "aquila/global.h"
 #include "aquila/transform/FftFactory.h"
 #include "aquila/source/WaveFile.h"
+#include "aquila/source/FramesCollection.h"
+#include "aquila/transform/Spectrogram.h"
+#include "aquila/functions.h"
+
 
 #include "CInputAudio.h"
 

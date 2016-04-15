@@ -1,6 +1,7 @@
 #ifndef __RECORDED_MELODY_
 #define __RECORDED_MELODY_
 
+#include "raspoznavayka.h"
 //#include "CMelody.h"
 //#include "CHash.h"
 

@@ -21,12 +21,12 @@ void CInputAudio::ReadAudioHelper( std::string fileDest ) {
 }
 
 // change sample rate. The objective frequency is staged in raspoznavayka.h defines
-void CInputAudio::Resample(/**/ ) {
-    int k = fs / SAMPLE_RATE;
-    if( k == 1 ) return;
-    if( k > 1 ) {
-        // decimation
-    } else {
-        // upsampling
-    }
-}
+// void CInputAudio::Resample(/**/ ) {
+//     int k = fs / SAMPLE_RATE;
+//     if( k == 1 ) return;
+//     if( k > 1 ) {
+//         // decimation
+//     } else {
+//         // upsampling
+//     }
+// }
