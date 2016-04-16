@@ -9,4 +9,4 @@ cd build/
 cmake ../src/
 make
 
-[ "x$1" == "x-r" ] && raspoznavayka
+[ "x$1" == "x-r" ] && ./raspoznavayka
