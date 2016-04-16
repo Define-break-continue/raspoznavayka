@@ -1,6 +1,3 @@
-#include "raspoznavayka.h"
-#include "CMelody.h"
-
 namespace Raspoznavayka {
     typedef std::int8_t arrow_t;
     typedef arrow_t ArrowType;

@@ -1,10 +1,3 @@
-#ifndef __RECORDED_MELODY_
-#define __RECORDED_MELODY_
-
-#include "raspoznavayka.h"
-//#include "CMelody.h"
-//#include "CHash.h"
-
 class CRecordedMelody : public CMelody {
     public:
     CRecordedMelody( std::vector< Aquila::SampleType >& waveform ) : CMelody( waveform ), hash( 0 ) {}
@@ -15,5 +8,3 @@ class CRecordedMelody : public CMelody {
     CHash hash;
     void setHash();
 };
-
-#endif // __RECORDED_MELODY_

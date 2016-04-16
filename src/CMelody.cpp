@@ -1,4 +1,4 @@
-#include "CMelody.h"
+#include "raspoznavayka.h"
 
 CMelody::CMelody( std::vector< Aquila::SampleType >& waveform ) : intervals( 0 ) {
     setIntervals( waveform );

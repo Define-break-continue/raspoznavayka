@@ -1,4 +1,4 @@
-#include "CRecordedMelody.h"
+#include "raspoznavayka.h"
 
 CHash& CRecordedMelody::getHash() {
     return hash;

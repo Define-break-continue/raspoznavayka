@@ -1,4 +1,4 @@
-#include "CInDBMelody.h"
+#include "raspoznavayka.h"
 
 CIDTag CInDBMelody::getIDTag() {
     return idTag;

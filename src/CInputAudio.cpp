@@ -1,4 +1,4 @@
-#include "CInputAudio.h"
+#include "raspoznavayka.h"
 
 CInputAudio::CInputAudio( std::string fileDest ) : signal( 0 ) { 
     ReadAudioHelper( fileDest );

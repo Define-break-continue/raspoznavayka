@@ -1,5 +1,4 @@
-#include "CHash.h"
-#include "CMelody.h"
+#include "raspoznavayka.h"
 
 CHash::CHash() : arrows( 0 ) {}
 

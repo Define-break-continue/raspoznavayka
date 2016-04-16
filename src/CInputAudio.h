@@ -1,8 +1,3 @@
-#ifndef __INPUT_AUDIO_
-#define __INPUT_AUDIO_
-
-#include "raspoznavayka.h"
-
 class CInputAudio {
     public:
     CInputAudio( std::string /*fileDest = "test.wav"*/ );
@@ -12,5 +7,3 @@ class CInputAudio {
     std::vector< Aquila::SampleType > signal;
     void Resample( /**/ );
 };
-
-#endif // __INPUT_AUDIO_
