@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11    CMakeFiles/raspoznavayka.dir/raspoznavayka.cpp.o CMakeFiles/raspoznavayka.dir/CInputAudio.cpp.o  -o raspoznavayka -rdynamic /home/ivan/Documents/Raspoznavaika/raspoznavayka/src/lib/libAquila.a 
