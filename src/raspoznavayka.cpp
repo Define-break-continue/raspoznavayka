@@ -1,7 +1,7 @@
 #include "raspoznavayka.h"
 
 int main() {
-    std::string a = "/home/ivan/Documents/Raspoznavaika/raspoznavayka/build/test.wav";
+    std::string a = "../resources/test.wav";
     CInputAudio inputAudio = CInputAudio(a);
     auto samples = inputAudio.getSignal();
     std::cout << std::endl << std::endl;

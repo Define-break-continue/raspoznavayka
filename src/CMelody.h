@@ -1,3 +1,8 @@
+#ifndef __MELODY_
+#define __MELODY_
+
+#include "raspoznavayka.h"
+
 //#include "lib/aquila/aquila.h"
 //#include "lib/aquila/transform/FftFactory.h"
 
@@ -8,19 +13,20 @@
 
 namespace Raspoznavayka {
     typedef std::uint16_t mel_size_t;
-    typedef mel_size_t MelodySizeType;
+    typedef std::uint16_t MelodySizeType;
+    typedef std::vector< std::vector < double > > Spectrogram;
 }
 
 class CMelody {
     public:
-    CMelody( std::vector< Aquila::SampleType > );
-    CMelody( Aquila::WaveFile );
-    CMelody( std::vector< Raspoznavayka::interval_t > intervals ) : intervals( intervals ) {}
-    std::vector< Raspoznavayka::interval_t > getIntervals();
+    CMelody( std::vector< Aquila::SampleType >& );
+    CMelody( std::vector< Raspoznavayka::interval_t >& intervals ) : intervals( intervals ) {}
+    std::vector< Raspoznavayka::interval_t >& getIntervals();
     Raspoznavayka::mel_size_t getLength();
     
     protected:
     std::vector< Raspoznavayka::interval_t > intervals;
-    void setIntervals( Aquila::WaveFile );
+    void setIntervals( std::vector< Aquila::SampleType >& );
 };
 
+#endif // __MELODY_

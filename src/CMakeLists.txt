@@ -19,10 +19,12 @@ set_property(TARGET aquila PROPERTY CXX_STANDARD 11)
 set (HEADERS
     raspoznavayka.h
     CInputAudio.h
+    CMelody.h
 )
 set (SOURCES
     raspoznavayka.cpp
     CInputAudio.cpp
+    CMelody.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})
