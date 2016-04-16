@@ -5,8 +5,9 @@
 
 namespace Raspoznavayka {
     typedef std::uint16_t mel_size_t;
-    typedef std::uint16_t MelodySizeType;
+    typedef mel_size_t MelodySizeType;
     typedef std::vector< std::vector < double > > Spectrogram;
+    typedef double dB_t;
 }
 
 class CMelody {
