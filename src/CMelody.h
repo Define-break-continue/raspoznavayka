@@ -1,5 +1,5 @@
-//#include "aquila/aquila.h"
-//#include "aquila/transform/FftFactory.h"
+//#include "lib/aquila/aquila.h"
+//#include "lib/aquila/transform/FftFactory.h"
 
 /*
  * Raspoznavayka::mel_size_t is a type to store length and offsets

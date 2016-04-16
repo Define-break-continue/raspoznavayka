@@ -11,9 +11,9 @@
 #include <string>
 #include <typeinfo>
 
-#include "aquila/global.h"
-#include "aquila/transform/FftFactory.h"
-#include "aquila/source/WaveFile.h"
+#include "lib/aquila/global.h"
+#include "lib/aquila/transform/FftFactory.h"
+#include "lib/aquila/source/WaveFile.h"
 
 #include "CInputAudio.h"
 

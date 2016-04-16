@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 add_library(aquila STATIC IMPORTED)
 
 set_property(TARGET aquila PROPERTY
-             IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/lib/libAquila.a)
+             IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/lib/aquila/libAquila.a)
 
 set_property(TARGET aquila PROPERTY CXX_STANDARD 11)
 
