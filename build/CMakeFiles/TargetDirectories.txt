@@ -1,1 +1,0 @@
-/home/ivan/Documents/Raspoznavaika/raspoznavayka/build/CMakeFiles/raspoznavayka.dir

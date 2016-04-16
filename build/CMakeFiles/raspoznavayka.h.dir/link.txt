@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11    CMakeFiles/raspoznavayka.h.dir/raspoznavayka.cpp.o CMakeFiles/raspoznavayka.h.dir/CInputAudio.cpp.o  -o raspoznavayka.h -rdynamic 
