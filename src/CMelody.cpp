@@ -49,25 +49,88 @@ auto dL( Aquila::FrequencyType f ) {
     return dl;
 }
 
-Aquila::FrequencyType getFrequencyFromIteratorNumber( std::size_t i, std::size_t n ) {
+inline Aquila::FrequencyType getFrequencyFromIteratorNumber( std::size_t i, std::size_t n ) {
     return SAMPLE_RATE / n * i;
 }
 
 // real spectrogram in dB/1, filter A
-Raspoznavayka::Spectrogram getSpectrogram( const std::vector< Aquila::SampleType >& waveform ) {
-    Aquila::SignalSource signal( waveform, SAMPLE_RATE );
-    Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
-    Aquila::Spectrogram complexSpectrogram( frames );
-    Raspoznavayka::Spectrogram realSpectrogram( complexSpectrogram.getFrameCount(), std::vector< double >( complexSpectrogram.getSpectrumSize(), 0 ) );
-    for( std::size_t iF = 0; iF < complexSpectrogram.getSpectrumSize(); ++iF ) {
-        for( std::size_t it = 0; it < complexSpectrogram.getFrameCount(); ++it ) {
-            realSpectrogram[ it ][ iF ] = Aquila::dB( complexSpectrogram.getPoint( it, iF ) )
-	        + dL( getFrequencyFromIteratorNumber( iF, complexSpectrogram.getSpectrumSize() ) );
-	}
+// Raspoznavayka::Spectrogram getSpectrogram( const std::vector< Aquila::SampleType >& waveform ) {
+//     Aquila::SignalSource signal( waveform, SAMPLE_RATE );
+//     Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
+//     Aquila::Spectrogram complexSpectrogram( frames );
+//     Raspoznavayka::Spectrogram realSpectrogram( complexSpectrogram.getFrameCount(), std::vector< double >( complexSpectrogram.getSpectrumSize(), 0 ) );
+//     for( std::size_t iF = 0; iF < complexSpectrogram.getSpectrumSize(); ++iF ) {
+//         for( std::size_t it = 0; it < complexSpectrogram.getFrameCount(); ++it ) {
+//             realSpectrogram[ it ][ iF ] = Aquila::dB( complexSpectrogram.getPoint( it, iF ) )
+// 	        + dL( getFrequencyFromIteratorNumber( iF, complexSpectrogram.getSpectrumSize() ) );
+// 	}
+//     }
+//     return realSpectrogram;
+// }
+
+inline Raspoznavayka::dB_t dBSum( Raspoznavayka::dB_t a, Raspoznavayka::dB_t b ) {
+    Raspoznavayka::dB_t max = std::max( a, b );
+    Raspoznavayka::dB_t min = std::min( a, b );
+    switch( std::round( max - min ) ) {
+        case 0: return max + 3;
+	case 1: return max + 2.5;
+	case 2:
+	case 3: return max + 2;
+	case 4: return max + 1.5;
+	case 5:
+	case 6:
+	case 7: return max + 1;
+	case 8:
+	case 9: return max + 0.5;
     }
-    return realSpectrogram;
+    return max;
+}
+
+inline void notePowerReset( vector< Raspoznavayka::dB_t >& notePower ) {
+    for( auto i = 0; i < notePower.size(); ++i )
+        notePower[ i ] = std::numeric_limits< Raspoznavayka::dB_t >::min();
+}
+
+inline Raspoznavayka::note_t LoudestNote( vector< dB_t >& notePower ) {
+    Raspoznavayka::dB_t maxPower = std::numeric_limits< Raspoznavayka::dB_t >::min();
+    Raspoznavayka::note_t result = LOWEST_NOTE;
+    for( Raspoznavayka::note_t note = LOWEST_NOTE; note <= HIGHEST_NOTE; ++note ) {
+         if( notePower[ note ] >= maxPower ) {
+	     maxPower = notePower[ note ];
+	     result = note;
+	 }
+    }
 }
 
 void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
-    // TODO main code of physics part will be here
+    Aquila::SignalSource signal( waveform, SAMPLE_RATE );
+    Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
+    auto fft = Aquila::FftFactory::getFft( SAMPLES_PER_FRAME ); // create an fft object
+    vector< Raspoznavayka::dB_t > notePower( Raspoznavayka::note_t::HIGHEST_NOTE - Raspoznavayka::note_t::LOWEST_NOTE + 1, std::numeric_limits< Raspoznavayka::dB_t >::min() ); // for note power count
+
+    Aquila::SpectrumType complexSpectrum( SAMPLES_PER_FRAME );
+    for( auto frame : frames ) { // for each frame
+        complexSpectrum = fft->fft( frame.toArray() ); // count complex spectrum
+	Raspoznavayka::note_t note = LOWEST_NOTE;
+        for( auto c = complexSpectrum.begin(), std::size_t i = 0; c != complexSpectrum.end(); ++c, ++i ) {
+	    auto f = getFrequencyFromIteratorNumber( i );
+            Raspoznavayka::dB_t L = Aquila::dB( *c ) + dL( f ); // real spectrum, filter A
+	    if( note > HIGHEST_NOTE + NEEDED_HALFTONES_TO_THE_LAST_OBERTONE ) // no need to count higher spectrum
+	        break;
+	    if( f >= note_freq[ note + 1 ] ) // increment the note
+	        note++;
+	    else if( f >= note_freq[ note ] ) { // hardcode: we need to add powers to the current note and to 2 lower octaves. TODO: add a macros for variable number of octaves
+	        if( note >= LOWEST_NOTE && note <= HIGHEST_NOTE )
+		    notePower[ note ] = dBSum( notePower[ note ], L );
+		if( note >= LOWEST_NOTE + HALFTONES_IN_AN_OCTAVE && note <= HIGHEST_NOTE + HALFTONES_IN_AN_OCTAVE )
+		    notePower[ note - HALFTONES_IN_AN_OCTAVE ] = dBSum( notePower[ note - HALFTONES_IN_AN_OCTAVE ], L );
+		if( note >= LOWEST_NOTE + 2 * HALFTONES_IN_AN_OCTAVE && note <= HIGHEST_NOTE + 2 * HALFTONES_IN_AN_OCTAVE )
+		    notePower[ note - 2 * HALFTONES_IN_AN_OCTAVE ] = dBSum( notePower[ note - 2 * HALFTONES_IN_AN_OCTAVE ], L );
+            }
+	// now we have all notes' powers
+	Raspoznavayka::note_t loudestNote = LoudestNote( notePower );
+...
+	notePowerReset( notePower );
+	}
+    }
 }

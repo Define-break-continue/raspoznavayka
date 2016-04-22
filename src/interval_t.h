@@ -1,5 +1,5 @@
 namespace Raspoznavayka {
-    enum interval_t : char {
+    enum interval_t : std::uint8_t {
         m2 = 1,
         M2,
         m3,
@@ -85,4 +85,22 @@ namespace Raspoznavayka {
         dM2,
         dm2
     };
+
+    enum note_t : std::uint8_t {
+        C = 1,
+	    Db,  D,  Eb,  E,  F,  Gb,  G,  Ab,  A,  Bb,  B,
+	c,  db,  d,  eb,  e,  f,  gb,  g,  ab,  a,  bb,  b,
+        c1, d1b, d1, e1b, e1, f1, g1b, g1, a1b, a1, b1b, b1,
+        c2, d2b, d2, e2b, e2, f2, g2b, g2, a2b, a2, b2b, b2,
+        c3, d3b, d3, e3b, e3, f3, g3b, g3, a3b, a3, b3b, b3,
+        c4, d4b, d4, e4b, e4, f4, g4b, g4, a4b, a4, b4b, b4,
+        c5, d5b, d5, e5b, e5, f5, g5b, g5, a5b, a5, b5b, b5,
+	c6, // c6 is used as the top freq of b5 interval; octaves 4 and 5 for obertones power count
+	P = 0, p = 0, PAUSE = 0
+    };
+
+    std::map< Aquila::FrequencyType, note_t > note_freq; // each value is the lowest frequency of the note bandwidth
+    for( note_t note = C; note < c6; ++note ) {
+        note_freq.insert( std::pair< note_t, Aquila::FrequencyType >( note, 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 ) ) );
+    }
 }
