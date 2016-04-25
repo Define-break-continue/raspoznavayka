@@ -68,23 +68,6 @@ inline Aquila::FrequencyType getFrequencyFromIteratorNumber( std::size_t i, std:
 //     return realSpectrogram;
 // }
 
-inline Raspoznavayka::dB_t dBSum( Raspoznavayka::dB_t a, Raspoznavayka::dB_t b ) {
-    Raspoznavayka::dB_t max = std::max( a, b );
-    Raspoznavayka::dB_t min = std::min( a, b );
-    switch( std::round( max - min ) ) {
-        case 0: return max + 3;
-	case 1: return max + 2.5;
-	case 2:
-	case 3: return max + 2;
-	case 4: return max + 1.5;
-	case 5:
-	case 6:
-	case 7: return max + 1;
-	case 8:
-	case 9: return max + 0.5;
-    }
-    return max;
-}
 
 inline void notePowerReset( vector< Raspoznavayka::dB_t >& notePower ) {
     for( auto i = 0; i < notePower.size(); ++i )
