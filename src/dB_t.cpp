@@ -13,6 +13,30 @@ namespace Raspoznavayka {
         return dB_t( dBSum( a, b.data ) );
     }
 
+    const dB_t operator%( const dB_t& a, const dB_t& b ) { 
+        return dB_t( a.data + b.data );
+    }
+    
+    const dB_t operator%( const double& a, const dB_t& b ) { 
+        return dB_t( a + b.data );
+    }
+    
+    const dB_t operator<<( const dB_t& a, const dB_t& b ) {
+        return dB_t( a.data + b.data );
+    }
+
+    const dB_t operator<<( const double& a, const dB_t& b ) {
+        return dB_t( a + b.data );
+    }
+
+    const dB_t operator>>( const dB_t& a, const dB_t& b ) {
+        return dB_t( a.data - b.data );
+    }
+
+    const dB_t operator>>( const double& a, const dB_t& b ) {
+        return dB_t( a - b.data );
+    }
+
     const dB_t operator*( const double& a, const dB_t& b ) {
         return dB_t( a * b.data );
     }
@@ -23,6 +47,46 @@ namespace Raspoznavayka {
 
     const dB_t operator/( const dB_t& a, const double& b ) {
         return dB_t( a.data / b );
+    }
+
+    const bool operator==( const double& a, const dB_t& b ) {
+        return a == b.data;
+    }
+
+    const bool operator>=( const double& a, const dB_t& b ) {
+        return a >= b.data;
+    }
+
+    const bool operator<=( const double& a, const dB_t& b ) {
+        return a <= b.data;
+    }
+
+    const bool operator>( const double& a, const dB_t& b ) {
+        return a > b.data;
+    }
+
+    const bool operator<( const double& a, const dB_t& b ) {
+        return a < b.data;
+    }
+
+    const bool operator==( const dB_t& a, const dB_t& b ) {
+        return a.data == b.data;
+    }
+
+    const bool operator>=( const dB_t& a, const dB_t& b ) {
+        return a.data >= b.data;
+    }
+
+    const bool operator<=( const dB_t& a, const dB_t& b ) {
+        return a.data <= b.data;
+    }
+
+    const bool operator>( const dB_t& a, const dB_t& b ) {
+        return a.data > b.data;
+    }
+
+    const bool operator<( const dB_t& a, const dB_t& b ) {
+        return a.data < b.data;
     }
     
     ostream& operator<<( ostream& os, const dB_t& a ) { 
