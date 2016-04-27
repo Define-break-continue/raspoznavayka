@@ -107,7 +107,7 @@ namespace Raspoznavayka {
     }
 
     inline double dBDifference( const double& a, const double& b ) {
-        switch( std::round( a - b ) ) {
+        switch( int( std::round( a - b ) ) ) {
             case 0: return 3;
             case 1: return 2.5;
             case 2:
