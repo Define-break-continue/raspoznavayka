@@ -99,8 +99,11 @@ namespace Raspoznavayka {
 	P = 0, p = 0, PAUSE = 0
     };
 
-    std::map< Aquila::FrequencyType, note_t > note_freq; // each value is the lowest frequency of the note bandwidth
-    for( note_t note = C; note < c6; ++note ) {
-        note_freq.insert( std::pair< note_t, Aquila::FrequencyType >( note, 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 ) ) );
-    }
-}
+//     std::map< Aquila::FrequencyType, note_t > note_freq; // each value is the lowest frequency of the note bandwidth
+//     for( note_t note = C; note < c6; ++note ) {
+//         note_freq.insert( std::pair< note_t, Aquila::FrequencyType >( note, 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 ) ) );
+//     }
+// }
+    std::vector< Aquila::FrequencyType > note_freq( HIGHEST_NOTE + 1 );
+    for( note_t note = C; note <= c6; ++note )
+        vector.at( note ) = 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 );

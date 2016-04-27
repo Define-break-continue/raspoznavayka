@@ -8,8 +8,8 @@
 #define SAMPLE_RATE 11025
 #define SAMPLES_PER_FRAME 1024
 #define SAMPLES_PER_OVERLAP 0
-#define LOWEST_NOTE C
-#define HIGHEST_NOTE b3
+#define LOWEST_NOTE Raspoznavayka::note_t::C
+#define HIGHEST_NOTE Raspoznavayka::note_t::b3
 #define NEEDED_HALFTONES_TO_THE_LAST_OBERTONE 24 // we need the energy of note freq and 2 upper octaves
 #define HALFTONES_IN_AN_OCTAVE 12
 
@@ -23,6 +23,7 @@
 #include <string>
 #include <typeinfo>
 #include <cmath>
+#include <limits>
 
 #include "lib/aquila/global.h"
 #include "lib/aquila/transform/FftFactory.h"

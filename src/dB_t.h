@@ -6,7 +6,6 @@ namespace Raspoznavayka {
         double data;
     public:
         dB_t( double x = std::numeric_limits< double >::min() ): data( x ) {}
-//	dB_t( dB_t a ): data( a.data ) {}
         explicit operator double() const { return this->data; }
 	const dB_t& operator+=( const dB_t& a ) { this->data += a.data; return *this; }
 	const dB_t& operator+=( const double& a ) { this->data += a; return *this; }
@@ -46,6 +45,8 @@ namespace Raspoznavayka {
 	friend const bool operator>( const dB_t& a, const dB_t& b );
         friend const bool operator<( const dB_t& a, const dB_t& b );
         friend ostream& operator<<( ostream& os, const dB_t& L );
+	static const double min() { return std::numeric_limits< double >::min(); }
+	static const double max() { return std::numeric_limits< double >::max(); }
     };
 }
 
