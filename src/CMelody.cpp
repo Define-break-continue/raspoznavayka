@@ -56,54 +56,45 @@ Raspoznavayka::dB_t dL( std::size_t iteratorNumber ) {
     return dl;
 }
 
-inline void notePowerReset( vector< Raspoznavayka::dB_t >& notePower ) {
-    for( auto i = 0; i < notePower.size(); ++i )
-        notePower[ i ] = std::numeric_limits< Raspoznavayka::dB_t >::min();
-}
-
-inline Raspoznavayka::note_t LoudestNote( vector< dB_t >& notePower ) {
-    Raspoznavayka::dB_t maxPower = std::numeric_limits< Raspoznavayka::dB_t >::min();
-    Raspoznavayka::note_t result = LOWEST_NOTE;
-    for( Raspoznavayka::note_t note = LOWEST_NOTE; note <= HIGHEST_NOTE; ++note ) {
-         if( notePower[ note ] >= maxPower ) {
-	     maxPower = notePower[ note ];
-	     result = note;
-	 }
-    }
-}
-
 void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     Aquila::SignalSource signal( waveform, SAMPLE_RATE );
     Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
     auto fft = Aquila::FftFactory::getFft( SAMPLES_PER_FRAME ); // create an fft object
-    vector< Raspoznavayka::dB_t > notePower( HIGHEST_NOTE + 1, Raspoznavayka::dB_t.min() ); // for note power count; note_index == note
+    std::vector< Raspoznavayka::dB_t > notePower( HIGHEST_NOTE + 1, Raspoznavayka::dB_t.min() ); // for note power count; note_index == note
     Aquila::SpectrumType complexSpectrum( SAMPLES_PER_FRAME );
+    std::vector< note_t > melody;
+    Raspoznavayka::dB_t currentNoteLevel = Raspoznavayka::dB_t.min();
 
     for( auto frame : frames ) { // for each frame
         complexSpectrum = fft->fft( frame.toArray() ); // count complex spectrum
 	Raspoznavayka::note_t note = LOWEST_NOTE;
         for( auto c = complexSpectrum.begin(), std::size_t i = 0; c != complexSpectrum.end(); ++c, ++i ) {
             Raspoznavayka::dB_t L = Aquila::dB( *c ) << dL( i ); // real spectrum, filter A; << is arithmetical addition for dB_t
-
-
-
-
             if( note > HIGHEST_NOTE + NEEDED_HALFTONES_TO_THE_LAST_OBERTONE ) // no need to count higher spectrum
 	        break;
 	    if( f >= note_freq[ note + 1 ] ) // increment the note
 	        note++;
-	    else if( f >= note_freq[ note ] ) { // hardcode: we need to add powers to the current note and to 2 lower octaves. TODO: add a macros for variable number of octaves
-	        if( note >= LOWEST_NOTE && note <= HIGHEST_NOTE )
-		    notePower[ note ] = dBSum( notePower[ note ], L );
-		if( note >= LOWEST_NOTE + HALFTONES_IN_AN_OCTAVE && note <= HIGHEST_NOTE + HALFTONES_IN_AN_OCTAVE )
-		    notePower[ note - HALFTONES_IN_AN_OCTAVE ] = dBSum( notePower[ note - HALFTONES_IN_AN_OCTAVE ], L );
-		if( note >= LOWEST_NOTE + 2 * HALFTONES_IN_AN_OCTAVE && note <= HIGHEST_NOTE + 2 * HALFTONES_IN_AN_OCTAVE )
-		    notePower[ note - 2 * HALFTONES_IN_AN_OCTAVE ] = dBSum( notePower[ note - 2 * HALFTONES_IN_AN_OCTAVE ], L );
+	    else if( f >= note_freq[ note ] ) { // we need to add powers to the current note and to some lower octaves
+	        for( std::size_t octave = 0; octave < LEVEL_ADDITION_N_OCTAVES; ++octave ) {
+    	            if( note >= octave * HALFTONES_IN_AN_OCTAVE + LOWEST_NOTE && note <= octave * HALFTONES_IN_AN_OCTAVE + HIGHEST_NOTE )
+    	                notePower[ note - octave * HALFTONES_IN_AN_OCTAVE ] += L;
+		}
             }
-	// now we have all notes' powers
-	Raspoznavayka::note_t loudestNote = LoudestNote( notePower );
-...
-	notePowerReset( notePower );
 	}
+	// now we have all notes' powers
+	Raspoznavayka::note_t loudestNote = distance( notePower.begin(), max_element( notePower.begin(), notePower.end() ) );
+	Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
+        if( currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES ) {
+            melody.push_back( loudestNote );
+	    currentNoteLevel = loudestNoteLevel;
+	}
+	std::fill(notePower.begin(), notePower.end(), Raspoznavayka::dB_t.min() ); // reset notePower vector values
+    }
+
+    // now we have the melody recorded in notes
+    // counting interval vector
+    intervals = std::vector< Raspoznavayka::interval_t >( melody.size() - 1 ); // N notes --> N - 1 intervals
+    for( std::size_t i = 0; i < intervals.size(); ++i ) {
+        intervals[ i ] = melody[ i + 1 ] - melody[ i ];
     }
 }
