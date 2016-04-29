@@ -1,89 +1,89 @@
 namespace Raspoznavayka {
-    enum interval_t : std::uint8_t {
-        m2 = 1,
-        M2,
-        m3,
-        M3,
-        P4,
-        A4 = 6,
-        d5 = 6,
-        P5 = 7,
-        m6 = 8,
-        M6,
-        m7,
-        M7,
-        P8,
-        m9,
-        M9,
-        m10,
-        M10,
-        P11,
-        A11 = 18,
-        d12 = 18,
-        P12 = 19,
-        m13,
-        M13,
-        m14,
-        M14,
-        P15,
-        m16,
-        M16,
-        m17,
-        M17,
-        P18,
-        A18 = 30, 
-        d19 = 30,
-        P19 = 31,
-        m20,
-        M20,
-        m21,
-        M21,
-        P22,
+    enum interval_t : std::int8_t {
+        m2_interval = 1,
+        M2_interval,
+        m3_interval,
+        M3_interval,
+        P4_interval,
+        A4_interval = 6,
+        d5_interval = 6,
+        P5_interval = 7,
+        m6_interval = 8,
+        M6_interval,
+        m7_interval,
+        M7_interval,
+        P8_interval,
+        m9_interval,
+        M9_interval,
+        m10_interval,
+        M10_interval,
+        P11_interval,
+        A11_interval = 18,
+        d12_interval = 18,
+        P12_interval = 19,
+        m13_interval,
+        M13_interval,
+        m14_interval,
+        M14_interval,
+        P15_interval,
+        m16_interval,
+        M16_interval,
+        m17_interval,
+        M17_interval,
+        P18_interval,
+        A18_interval = 30, 
+        d19_interval = 30,
+        P19_interval = 31,
+        m20_interval,
+        M20_interval,
+        m21_interval,
+        M21_interval,
+        P22_interval,
     
-        pause = 0,
-        PAUSE = 0,
-        P = 0,
-        p = 0,
+        pause_interval = 0,
+        PAUSE_interval = 0,
+        P_interval = 0,
+        p_interval = 0,
     
-        dP22 = -36,
-        dM21 = -35,
-        dm21,
-        dM20,
-        dm20,
-        dP19,
-        dd19 = -30,
-        dA18 = -30,
-        dP18 = -29,
-        dM17,
-        dm17,
-        dM16,
-        dm16,
-        dP15,
-        dM14,
-        dm14,
-        dM13,
-        dm13,
-        dP12,
-        dd12 = -18, 
-        dA11 = -18,
-        dP11 = -17,
-        dM10,
-        dm10,
-        dM9,
-        dm9,
-        dP8,
-        dM7,
-        dm7,
-        dM6,
-        dm6,
-        dP5,
-        dd5 = -6,
-        dA4 = -6,
-        dP4 = -5,
-        dM3,
-        dm3,
-        dM2,
-        dm2
+        dP22_interval = -36,
+        dM21_interval = -35,
+        dm21_interval,
+        dM20_interval,
+        dm20_interval,
+        dP19_interval,
+        dd19_interval = -30,
+        dA18_interval = -30,
+        dP18_interval = -29,
+        dM17_interval,
+        dm17_interval,
+        dM16_interval,
+        dm16_interval,
+        dP15_interval,
+        dM14_interval,
+        dm14_interval,
+        dM13_interval,
+        dm13_interval,
+        dP12_interval,
+        dd12_interval = -18, 
+        dA11_interval = -18,
+        dP11_interval = -17,
+        dM10_interval,
+        dm10_interval,
+        dM9_interval,
+        dm9_interval,
+        dP8_interval,
+        dM7_interval,
+        dm7_interval,
+        dM6_interval,
+        dm6_interval,
+        dP5_interval,
+        dd5_interval = -6,
+        dA4_interval = -6,
+        dP4_interval = -5,
+        dM3_interval,
+        dm3_interval,
+        dM2_interval,
+        dm2_interval
     };
 
     enum note_t : std::uint8_t {
@@ -99,11 +99,29 @@ namespace Raspoznavayka {
 	P = 0, p = 0, PAUSE = 0
     };
 
+    note_t& operator++( note_t& n ) {
+        return n = static_cast< note_t >( static_cast< std::uint8_t >( n ) + 1 );
+    }
+
+//    note_t operator+( const note_t& a, const note_t& b ) {
+//        return static_cast< note_t >( static_cast< std::uint8_t >( a ) + static_cast< std::uint8_t >( b ) );
+//    }
+
+    interval_t operator-( const note_t& a, const note_t& b ) {
+        return static_cast< interval_t >( static_cast< std::uint8_t >( a ) - static_cast< std::uint8_t >( b ) );
+    }
+
 //     std::map< Aquila::FrequencyType, note_t > note_freq; // each value is the lowest frequency of the note bandwidth
 //     for( note_t note = C; note < c6; ++note ) {
 //         note_freq.insert( std::pair< note_t, Aquila::FrequencyType >( note, 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 ) ) );
 //     }
 // }
-    std::vector< Aquila::FrequencyType > note_freq( HIGHEST_NOTE + 1 );
-    for( note_t note = C; note <= c6; ++note )
-        vector.at( note ) = 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 );
+    const std::vector< Aquila::FrequencyType > note_freq( []() {
+        auto note = C;
+	std::vector< Aquila::FrequencyType > v( HIGHEST_NOTE + 1 );
+        for( auto frequency = v.begin(); frequency < v.end(); ++frequency, ++note ) {
+            *frequency = 65.406 * pow( 2, (double) ( note - 1 ) / 12.0 - 1.0 / 24.0 );
+	}
+	return v;
+    }() );
+}

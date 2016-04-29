@@ -24,11 +24,13 @@ set (HEADERS
     raspoznavayka.h
     CInputAudio.h
     CMelody.h
+    dB_t.h
 )
 set (SOURCES
     raspoznavayka.cpp
     CInputAudio.cpp
     CMelody.cpp
+    dB_t.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})

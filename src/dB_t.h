@@ -44,7 +44,7 @@ namespace Raspoznavayka {
 	friend const bool operator<=( const dB_t& a, const dB_t& b );
 	friend const bool operator>( const dB_t& a, const dB_t& b );
         friend const bool operator<( const dB_t& a, const dB_t& b );
-        friend ostream& operator<<( ostream& os, const dB_t& L );
+        friend std::ostream& operator<<( std::ostream& os, const dB_t& L );
 	static const double min() { return std::numeric_limits< double >::min(); }
 	static const double max() { return std::numeric_limits< double >::max(); }
     };

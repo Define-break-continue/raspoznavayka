@@ -89,7 +89,7 @@ namespace Raspoznavayka {
         return a.data < b.data;
     }
     
-    ostream& operator<<( ostream& os, const dB_t& a ) { 
+    std::ostream& operator<<( std::ostream& os, const dB_t& a ) { 
         os << a.data;
         return os; 
     }
