@@ -31,6 +31,7 @@ set (SOURCES
     CInputAudio.cpp
     CMelody.cpp
     dB_t.cpp
+    interval_t.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})

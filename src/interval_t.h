@@ -99,29 +99,24 @@ namespace Raspoznavayka {
 	P = 0, p = 0, PAUSE = 0
     };
 
-    note_t& operator++( note_t& n ) {
-        return n = static_cast< note_t >( static_cast< std::uint8_t >( n ) + 1 );
-    }
-
+    note_t& operator++( note_t& n );
 //    note_t operator+( const note_t& a, const note_t& b ) {
 //        return static_cast< note_t >( static_cast< std::uint8_t >( a ) + static_cast< std::uint8_t >( b ) );
 //    }
 
-    interval_t operator-( const note_t& a, const note_t& b ) {
-        return static_cast< interval_t >( static_cast< std::uint8_t >( a ) - static_cast< std::uint8_t >( b ) );
-    }
-
+    interval_t operator-( const note_t& a, const note_t& b );
 //     std::map< Aquila::FrequencyType, note_t > note_freq; // each value is the lowest frequency of the note bandwidth
 //     for( note_t note = C; note < c6; ++note ) {
 //         note_freq.insert( std::pair< note_t, Aquila::FrequencyType >( note, 65.406 * cmath::pow( 2, ( note - 1 ) / 12 - 1 / 24 ) ) );
 //     }
 // }
-    const std::vector< Aquila::FrequencyType > note_freq( []() {
+    const std::vector< Aquila::FrequencyType > note_freq = []() {
         auto note = C;
-	std::vector< Aquila::FrequencyType > v( HIGHEST_NOTE + 1 );
+        std::vector< Aquila::FrequencyType > v( HIGHEST_NOTE + 1 );
         for( auto frequency = v.begin(); frequency < v.end(); ++frequency, ++note ) {
             *frequency = 65.406 * pow( 2, (double) ( note - 1 ) / 12.0 - 1.0 / 24.0 );
 	}
 	return v;
-    }() );
+    }();
+;
 }

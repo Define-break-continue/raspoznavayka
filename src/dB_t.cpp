@@ -94,6 +94,76 @@ namespace Raspoznavayka {
         return os; 
     }
 
+    dB_t::dB_t( double x ): data( x ) { }
+
+    dB_t::operator double() const {
+        return this->data; 
+    }
+
+    const dB_t& dB_t::operator+=( const dB_t& a ) {
+        this->data += a.data; return *this; 
+    }
+
+    const dB_t& dB_t::operator+=( const double& a ) {
+        this->data += a; return *this; 
+    }
+
+    const dB_t& dB_t::operator-=( const dB_t& a ) {
+        this->data -= a.data; return *this; 
+    }
+
+    const dB_t& dB_t::operator-=( const double& a ) {
+        this->data -= a; return *this; 
+    }
+
+    const dB_t& dB_t::operator%=( const dB_t& a ) {
+        this->data += a.data; return *this; 
+    }
+
+    const dB_t& dB_t::operator%=( const double& a ) {
+        this->data += a; return *this; 
+    }
+
+    const dB_t& dB_t::operator<<=( const dB_t& a ) {
+        this->data += a.data; return *this; 
+    }
+
+    const dB_t& dB_t::operator<<=( const double& a ) {
+        this->data += a; return *this; 
+    }
+
+    const dB_t& dB_t::operator>>=( const dB_t& a ) {
+        this->data -= a.data; return *this; 
+    }
+
+    const dB_t& dB_t::operator>>=( const double& a ) {
+        this->data -= a; return *this; 
+    }
+
+    const dB_t& dB_t::operator++() {
+        this->data += 1; return *this; 
+    }
+
+    const dB_t dB_t::operator++( int ) {
+        auto temp = *this; this->data += 1; return temp; 
+    }
+
+    const dB_t& dB_t::operator--() {
+        this->data -= 1; return *this; 
+    }
+
+    const dB_t dB_t::operator--( int ) {
+        auto temp = *this; this->data -= 1; return temp; 
+    }
+
+    const double dB_t::min() {
+        return std::numeric_limits< double >::min(); 
+    }
+
+    const double dB_t::max() {
+        return std::numeric_limits< double >::max(); 
+    }
+
     inline double dBSum( const double& a, const double& b ) {
         double max = std::max( a, b );
         double min = std::min( a, b );
