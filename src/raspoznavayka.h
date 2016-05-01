@@ -34,6 +34,7 @@
 #include "lib/aquila/transform/Spectrogram.h"
 #include "lib/aquila/functions.h"
 
+#include "errors.h"
 #include "dB_t.h"
 
 #include "CInputAudio.h"

@@ -56,6 +56,25 @@ Raspoznavayka::dB_t dL( std::size_t iteratorNumber ) {
     return dl;
 }
 
+inline std::vector< Raspoznavayka::note_t > getNotesVectorFromFrequency( Aquila::FrequencyType f ) {
+    auto nOfOctavesForSum = LEVEL_ADDITION_N_OCTAVES;
+    while( f < Raspoznavayka::note_freq[ LOWEST_NOTE ] ) {
+        f *= 2;
+	--nOfOctavesForSum;
+	if( !nOfOctavesForSum )
+	    return std::vector< Raspoznavayka::note_t >( 0 );
+    }
+    if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] )
+        Raspoznavayka::frequencyError();
+    Raspoznavayka::note_t note = LOWEST_NOTE;
+    while( f < Raspoznavayka::note_freq[ note ] )
+        ++note;
+    std::vector< Raspoznavayka::note_t > result;
+    for( std::size_t octave = 0; octave < nOfOctavesForSum; ++octave )
+        result.push_back( note + octave * HALFTONES_IN_AN_OCTAVE );
+    return result;
+}
+
 void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     Aquila::SignalSource signal( waveform, SAMPLE_RATE );
     Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
@@ -64,37 +83,36 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     Aquila::SpectrumType complexSpectrum( SAMPLES_PER_FRAME );
     std::vector< Raspoznavayka::note_t > melody;
     Raspoznavayka::dB_t currentNoteLevel = Raspoznavayka::dB_t().min();
+std::cout << "checkpoint: setIntervalsInit\nframes n: " << frames.count() << std::endl;
 
     for( auto frame : frames ) { // for each frame
         complexSpectrum = fft->fft( frame.toArray() ); // count complex spectrum
-	Raspoznavayka::note_t note = LOWEST_NOTE;
 	Aquila::SpectrumType::iterator c;
 	std::size_t i;
-        for( c = complexSpectrum.begin(), i = 0; c != complexSpectrum.end(); ++c, ++i ) {
+        for( c = complexSpectrum.begin() + 1, i = 1; c != complexSpectrum.end(); ++c, ++i ) {
             Raspoznavayka::dB_t L = Aquila::dB( *c ) << dL( i ); // real spectrum, filter A; << is arithmetical addition for dB_t
-            if( note > HIGHEST_NOTE + NEEDED_HALFTONES_TO_THE_LAST_OBERTONE ) // no need to count higher spectrum
-	        break;
             auto f = getFrequencyFromIteratorNumber( i );
-	    if( f >= Raspoznavayka::note_freq[ note + 1 ] ) // increment the note
-	        ++note;
-	    else if( f >= Raspoznavayka::note_freq[ note ] ) { // we need to add powers to the current note and to some lower octaves
-	        for( std::size_t octave = 0; octave < LEVEL_ADDITION_N_OCTAVES; ++octave ) {
-    	            if( note >= octave * HALFTONES_IN_AN_OCTAVE + LOWEST_NOTE && note <= octave * HALFTONES_IN_AN_OCTAVE + HIGHEST_NOTE )
-    	                notePower[ note - octave * HALFTONES_IN_AN_OCTAVE ] += L;
-		}
-            }
-	}
+            if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] ) {
+	        break;
+	    }
+	    auto notes = getNotesVectorFromFrequency( f );
+            for( auto note : notes ) {
+                notePower[ note ] += L;
+	    }
+        }
 	// now we have all notes' powers
         auto loudestNotePoiner = std::max_element( notePower.begin(), notePower.end() );
 	Raspoznavayka::note_t loudestNote = static_cast< Raspoznavayka::note_t >( std::distance( notePower.begin(), loudestNotePoiner ) );
 	Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
-        if( currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES ) {
+        if( melody.empty() || currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
             melody.push_back( loudestNote );
 	    currentNoteLevel = loudestNoteLevel;
 	}
 	std::fill(notePower.begin(), notePower.end(), Raspoznavayka::dB_t().min() ); // reset notePower vector values
+        currentNoteLevel = Raspoznavayka::dB_t().min();
     }
 
+for( auto j : melody ) std::cout << j << ' ';
     // now we have the melody recorded in notes
     // counting interval vector
     intervals = std::vector< Raspoznavayka::interval_t >( melody.size() - 1 ); // N notes --> N - 1 intervals

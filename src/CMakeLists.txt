@@ -25,6 +25,8 @@ set (HEADERS
     CInputAudio.h
     CMelody.h
     dB_t.h
+    interval_t.h
+    errors.h
 )
 set (SOURCES
     raspoznavayka.cpp
@@ -32,6 +34,7 @@ set (SOURCES
     CMelody.cpp
     dB_t.cpp
     interval_t.cpp
+    errors.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})
