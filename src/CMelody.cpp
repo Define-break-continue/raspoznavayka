@@ -57,6 +57,7 @@ Raspoznavayka::dB_t dL( std::size_t iteratorNumber ) {
 }
 
 inline std::vector< Raspoznavayka::note_t > getNotesVectorFromFrequency( Aquila::FrequencyType f ) {
+std::cout << "f = " << f << ' ';
     auto nOfOctavesForSum = LEVEL_ADDITION_N_OCTAVES;
     while( f < Raspoznavayka::note_freq[ LOWEST_NOTE ] ) {
         f *= 2;
@@ -67,11 +68,15 @@ inline std::vector< Raspoznavayka::note_t > getNotesVectorFromFrequency( Aquila:
     if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] )
         Raspoznavayka::frequencyError();
     Raspoznavayka::note_t note = LOWEST_NOTE;
-    while( f < Raspoznavayka::note_freq[ note ] )
+    while( f > Raspoznavayka::note_freq[ note ] )
         ++note;
-    std::vector< Raspoznavayka::note_t > result;
-    for( std::size_t octave = 0; octave < nOfOctavesForSum; ++octave )
-        result.push_back( note + octave * HALFTONES_IN_AN_OCTAVE );
+    std::vector< Raspoznavayka::note_t > result( nOfOctavesForSum );
+    for( std::size_t octave = 0; octave < nOfOctavesForSum; ++octave ) {
+std::cout << "infor\n";
+        result[octave] = /*.push_back*/static_cast< Raspoznavayka::note_t >( note + octave * HALFTONES_IN_AN_OCTAVE );
+    }
+for( auto k : result ) std::cout << "; " << k;
+std::cout << std::endl;
     return result;
 }
 
@@ -88,23 +93,31 @@ std::cout << "checkpoint: setIntervalsInit\nframes n: " << frames.count() << std
     for( auto frame : frames ) { // for each frame
         complexSpectrum = fft->fft( frame.toArray() ); // count complex spectrum
 	Aquila::SpectrumType::iterator c;
-	std::size_t i;
-        for( c = complexSpectrum.begin() + 1, i = 1; c != complexSpectrum.end(); ++c, ++i ) {
+	std::size_t i = 1;
+	// ОШИБКА В СЛЕДУЮЩЕЙ СТРОКЕ. Segmentation Fault
+        for( c = complexSpectrum.begin() + 1; c < complexSpectrum.end(); ++c, ++i ) {
+std::cout<<"begin\n";
             Raspoznavayka::dB_t L = Aquila::dB( *c ) << dL( i ); // real spectrum, filter A; << is arithmetical addition for dB_t
             auto f = getFrequencyFromIteratorNumber( i );
+std::cout<<"after getFreq="<<f<<"\n";
             if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] ) {
 	        break;
 	    }
+std::cout<<"before getNotes\n";
 	    auto notes = getNotesVectorFromFrequency( f );
             for( auto note : notes ) {
+std::cout<<"notePower1\n";
                 notePower[ note ] += L;
-	    }
+std::cout<<"notePower2\n";
+            }
+std::cout<<"next: " << i << "\n";
         }
 	// now we have all notes' powers
         auto loudestNotePoiner = std::max_element( notePower.begin(), notePower.end() );
 	Raspoznavayka::note_t loudestNote = static_cast< Raspoznavayka::note_t >( std::distance( notePower.begin(), loudestNotePoiner ) );
 	Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
         if( melody.empty() || currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
+std::cout << "note: " << loudestNote << ' ';
             melody.push_back( loudestNote );
 	    currentNoteLevel = loudestNoteLevel;
 	}
