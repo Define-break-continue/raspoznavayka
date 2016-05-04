@@ -12,6 +12,9 @@ void CInputAudio::ReadAudioHelper( std::string fileDest ) {
     Aquila::WaveFile wav( fileDest );
     std::cout << "Loaded file: " << wav.getFilename()
               << " (" << wav.getBitsPerSample() << "b)" << std::endl;
+    std::cout << "Wavefile parameters:\n";
+    std::cout << "Length(ms): " << wav.getAudioLength() << std::endl;
+    std::cout << "Sample frequency: " << wav.getSampleFrequency() << " Hz";
 
     signal.resize( wav.getSamplesCount() );
     auto signalIterator = 0;

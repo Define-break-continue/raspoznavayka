@@ -31,6 +31,7 @@ set (SOURCES
     dB_t.cpp
     interval_t.cpp
 #	CDataBase.cpp
+    errors.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})
