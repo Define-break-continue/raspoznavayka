@@ -142,7 +142,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
     std::vector< CHashMatch > result;
     if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
         std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
-            << "\nor some hash file in << hash_file_subdir << '\n';
+            << "\nor some hash file in " << hash_file_subdir << '\n';
         return result;
     }
     
@@ -177,7 +177,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
             }
             id3_start = ( id3_start << 8 ) + (unsigned char) b;
         }
-        for( int i = 0; i < mel_file_max_size_koef; ++i ) { // mel_start
+        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
             char b = 0;
             if( ! hash_file.read( &b, 1 ).good() ) {
                 std::cout << "ERROR: in hash file while reading mel_start\n";
@@ -193,7 +193,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
             }
             id3_end = ( id3_end << 8 ) + (unsigned char) b;
         }
-        for( int i = 0; i < mel_file_max_size_koef; ++i ) { // mel_end
+        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
             char b = 0;
             if( ! hash_file.read( &b, 1 ).good() ) {
                 std::cout << "ERROR: in hash file while reading mel_end\n";
