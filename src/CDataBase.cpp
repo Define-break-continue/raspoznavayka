@@ -5,6 +5,11 @@ const CDataBase CDataBase::getInstance() {
     return theSingleInstance;
 }
 
+CDataBase::CDataBase( CDataBase const& ) {
+    // singletone!
+    assert( false );
+}
+
 CDataBase::CDataBase() {
     /* 
      * This will be read from a .config file at runtime
@@ -233,7 +238,8 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) {
                 }
                 intervals.push_back( static_cast< Raspoznavayka::interval_t >( interval ) );
             }
-            CInDBMelody new_melody( intervals, artist, album, name, std::atoi( year.c_str() ) );
+            CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
+            CInDBMelody new_melody( intervals, idtag );
             result.push_back( CHashMatch( new_melody, mel_chm_offs - fixed_hash_offset ) );
         } // hash file read cycle
 		hash_file.close();
@@ -257,7 +263,7 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) {
         } else {
             pow *= 2;
         }
-        if( fixed_hash.arrows[CFixedHash::length - a - 1] == Raspoznavayka::arrow_up ) {
+        if( fixed_hash.getHash()[CFixedHash::length - a - 1] == Raspoznavayka::arrow_up ) {
             res[ filename_length - a / 4 - 1 ] += pow;
         }
     }

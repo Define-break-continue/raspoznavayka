@@ -30,8 +30,10 @@ set (SOURCES
     CInDBMelody.cpp
     dB_t.cpp
     interval_t.cpp
-#	CDataBase.cpp
+	CDataBase.cpp
     errors.cpp
+    CHash.cpp
+    CFixedHash.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})

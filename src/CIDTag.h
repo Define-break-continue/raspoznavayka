@@ -1,9 +1,6 @@
 #ifndef __IDTAG_
 #define __IDTAG_
 
-//#include "raspoznavayka.h"
-//#include <string>
-
 struct CIDTag {
     std::string title;
     std::string artist;
