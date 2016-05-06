@@ -1,6 +1,6 @@
 //#include "CIDTag.h"
 
-class CInDBMelody : CMelody {
+class CInDBMelody : public CMelody {
 public:
     CInDBMelody( std::vector< Raspoznavayka::interval_t > intervals );
     CInDBMelody( CRecordedMelody& melody );

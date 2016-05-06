@@ -129,7 +129,8 @@ bool CDataBase::addMelody( CInDBMelody melody ) {
     return true;
 }
 
-std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
+std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) {
+	std::vector< CHashMatch > result;
     std::ifstream index_file;
     std::ifstream id3_file;
     std::ifstream mel_file;
@@ -137,98 +138,110 @@ std::vector< CHashMatch > CDataBase::searchByHash( CFixedHash fixed_hash ) {
     index_file.open( index_filename, std::fstream::in | std::fstream::binary );
     id3_file.open( id3_filename, std::fstream::in );
     mel_file.open( mel_filename, std::fstream::in | std::fstream::binary );
-    hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-
-    std::vector< CHashMatch > result;
-    if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
-        std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
-            << "\nor some hash file in " << hash_file_subdir << '\n';
-        return result;
-    }
     
-    // hash file read cycle
-    while( true ) { 
-        // read melody id
-        uint64_t mel_id = 0;
-        for( int i = 0; i < mel_number_size_koeff; ++i ) {
-            char b = 0;
-            hash_file.read( &b, 1 );
-            if( ! hash_file.good() ) {
-                break; // all melodies have been read from hash file
+    for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
+
+		CFixedHash fixed_hash( hash, fixed_hash_offset );
+		hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
+		if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
+			std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
+				<< "\nor some hash file in " << hash_file_subdir << '\n';
+			return result;
+		}
+
+        // hash file read cycle
+        while( true ) { 
+            // read melody id
+            uint64_t mel_id = 0;
+            for( int i = 0; i < mel_number_size_koeff; ++i ) {
+                char b = 0;
+                hash_file.read( &b, 1 );
+                if( ! hash_file.good() ) {
+                    break; // all melodies have been read from hash file
+                }
+                mel_id = ( mel_id << 8 ) + (unsigned char) b;
             }
-            mel_id = ( mel_id << 8 ) + (unsigned char) b;
-        }
-        // read fixed hash match offset in melody
-        uint64_t mel_chm_offs = 0;
-        for( int i = 0; i < mel_max_size_koeff; ++i ) {
-            char b = 0;
-            hash_file.read( &b, 1 );
-            mel_chm_offs = ( mel_chm_offs << 8 ) + (unsigned char) b;
-        }
-        // get index entry on this song
-        index_file.seekg( mel_id * ( mel_number_size_koeff + mel_max_size_koeff ) );
-        // get id3 and and melody addresses
-        uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
-        for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
-            char b = 0;
-            if( ! hash_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in hash file while reading id3_start\n";
+            // read fixed hash match offset in melody
+            Raspoznavayka::mel_size_t mel_chm_offs = 0;
+            for( int i = 0; i < mel_max_size_koeff; ++i ) {
+                char b = 0;
+                hash_file.read( &b, 1 );
+                mel_chm_offs = ( mel_chm_offs << 8 ) + (unsigned char) b;
+            }
+            // get index entry on this song
+            index_file.seekg( mel_id * ( mel_number_size_koeff + mel_max_size_koeff ) );
+            // get id3 and and melody addresses
+            uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
+            for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
+                char b = 0;
+                if( ! hash_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in hash file while reading id3_start\n";
+                    break;
+                }
+                id3_start = ( id3_start << 8 ) + (unsigned char) b;
+            }
+            for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
+                char b = 0;
+                if( ! hash_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in hash file while reading mel_start\n";
+                    break;
+                }
+                mel_start = ( mel_start << 8 ) + (unsigned char) b;
+            }
+            for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
+                char b = 0;
+                if( ! hash_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in hash file while reading id3_end\n";
+                    break;
+                }
+                id3_end = ( id3_end << 8 ) + (unsigned char) b;
+            }
+            for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
+                char b = 0;
+                if( ! hash_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in hash file while reading mel_end\n";
+                    break;
+                }
+                mel_end = ( mel_end << 8 ) + (unsigned char) b;
+            }
+            // read id3 tags
+            assert( id3_start < id3_end );
+            assert( mel_start < mel_end );
+            std::string artist, album, name, year;
+            uint64_t record_size = id3_end - id3_start;
+            if( ! id3_file.seekg( id3_start ).good() ) {
+                std::cout << "ERROR: in id3 file\n";
                 break;
             }
-            id3_start = ( id3_start << 8 ) + (unsigned char) b;
-        }
-        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
-            char b = 0;
-            if( ! hash_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in hash file while reading mel_start\n";
+            std::getline( id3_file, artist );
+            record_size -= id3_file.gcount();
+            std::getline( id3_file, album );
+            record_size -= id3_file.gcount();
+            std::getline( id3_file, name );
+            record_size -= id3_file.gcount();
+            std::getline( id3_file, year );
+            if( ! id3_file.seekg( mel_start ).good() ) {
+                std::cout << "ERROR: in mel file\n";
                 break;
             }
-            mel_start = ( mel_start << 8 ) + (unsigned char) b;
-        }
-        for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
-            char b = 0;
-            if( ! hash_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in hash file while reading id3_end\n";
-                break;
+            std::vector< Raspoznavayka::interval_t > intervals( mel_end - mel_start );
+            for( uint64_t i = mel_start; i < mel_end; ++i ) {
+                char interval;
+                if( mel_file.get( interval ).fail() ) {
+                    std::cout << "ERROR: in mel file\n";
+                    break;
+                }
+                intervals.push_back( static_cast< Raspoznavayka::interval_t >( interval ) );
             }
-            id3_end = ( id3_end << 8 ) + (unsigned char) b;
-        }
-        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
-            char b = 0;
-            if( ! hash_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in hash file while reading mel_end\n";
-                break;
-            }
-            mel_end = ( mel_end << 8 ) + (unsigned char) b;
-        }
-        // read id3 tags
-        assert( id3_start < id3_end );
-        assert( mel_start < mel_end );
-        std::string artist, album, name, year;
-        uint64_t record_size = id3_end - id3_start;
-        if( ! id3_file.seekg( id3_start ).good() ) {
-            std::cout << "ERROR: in id3 file\n";
-            break;
-        }
-        id3_file.getline( artist, record_size );
-        record_size -= id3_file.gcount();
-        id3_file.getline( album, record_size );
-        record_size -= id3_file.gcount();
-        id3_file.getline( name, record_size );
-        record_size -= id3_file.gcount();
-        id3_file.getline( year, record_size );
-        char *intervals_char = new char[ mel_end - mel_start ];
-        if( ! id3_file.seekg( mel_start ).good() ) {
-            std::cout << "ERROR: in mel file\n";
-            break;
-        }
-        if( mel_file.read( intervals_char, mel_end - mel_start ).fail() ) {
-            std::cout << "ERROR: in mel file\n";
-            break;
-        }
-        CInDBMelody new_melody( std::vector< Raspoznavayka::interval_t >( intervals_char ), artist, album, name, std::atoi(year) );
-        result.push_back( new_melody );
-    } // hash file read cycle
+            CInDBMelody new_melody( intervals, artist, album, name, std::atoi( year.c_str() ) );
+            result.push_back( CHashMatch( new_melody, mel_chm_offs - fixed_hash_offset ) );
+        } // hash file read cycle
+		hash_file.close();
+
+    }
+    id3_file.close();
+    mel_file.close();
+    index_file.close();
     return result;
 }
 
