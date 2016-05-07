@@ -42,7 +42,7 @@ Raspoznavayka::dB_t dL( Aquila::FrequencyType f ) {
 
     std::size_t i = 1;
     // searching the two freqs, between which the input freq is
-    for ( ; f >= frequencies[ i ] && i < frequencies.size(); ++i );
+    for ( ; i < frequencies.size() && f >= frequencies[ i ]; ++i );
     if( i >= frequencies.size() ) return Raspoznavayka::dB_t( std::numeric_limits< double >::min() );
     // points for linear approximation
     x1 = frequencies[ i - 1 ];
@@ -91,6 +91,10 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     std::vector< Raspoznavayka::note_t > melody( 0 );
     Raspoznavayka::dB_t currentNoteLevel = Raspoznavayka::dB_t().min();
 
+Raspoznavayka::dB_t a = 50;
+a+=50;
+std::cout<<a<<std::endl;
+
 auto ii = 1;
     for( auto frame : frames ) { // for each frame
         complexSpectrum = fft->fft( frame.toArray() ); // count complex spectrum
@@ -100,8 +104,8 @@ auto ii = 1;
 	std::size_t i = 1;
         for( auto c = complexSpectrum.begin() + 1; c < complexSpectrum.end(); ++c, ++i ) {
             auto f = getFrequencyFromIteratorNumber( i );
-std::cout<<"dL = "<<dL(f)<<std::endl;
-            Raspoznavayka::dB_t L = Aquila::dB( *c );// << dL( f ); // real spectrum, filter A; << is arithmetical addition for dB_t
+            Raspoznavayka::dB_t L = Aquila::dB( *c ) << dL( f ); // real spectrum, filter A; << is arithmetical addition for dB_t
+//std::cout<<"L"<<L<<' ';
             if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] ) {
 	        break;
 	    }
@@ -111,12 +115,12 @@ std::cout<<"dL = "<<dL(f)<<std::endl;
             }
         }
 	// now we have all notes' powers
-for( auto np : notePower ) std::cout<<np<<' ';
-std::cout<<std::endl;
+//for( auto np : notePower ) std::cout<<np<<' ';
+//std::cout<<std::endl;
         auto loudestNotePoiner = std::max_element( notePower.begin(), notePower.end() );
 	Raspoznavayka::note_t loudestNote = static_cast< Raspoznavayka::note_t >( std::distance( notePower.begin(), loudestNotePoiner ) );
 	Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
-std::cout<<"loudest note: " << loudestNote<<std::endl;
+//std::cout<<"loudest note: " << loudestNote<<std::endl;
         if( melody.empty() || currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
             melody.push_back( loudestNote );
 	    currentNoteLevel = loudestNoteLevel;

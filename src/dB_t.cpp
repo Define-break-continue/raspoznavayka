@@ -13,6 +13,14 @@ namespace Raspoznavayka {
         return dB_t( dBSum( a, b.data ) );
     }
 
+    const dB_t operator-( const dB_t& a, const dB_t& b ) { 
+        return dB_t( dBResidual( a.data, b.data ) );
+    }
+    
+    const dB_t operator-( const double& a, const dB_t& b ) { 
+        return dB_t( dBResidual( a, b.data ) );
+    }
+
     const dB_t operator%( const dB_t& a, const dB_t& b ) { 
         return dB_t( a.data + b.data );
     }
@@ -101,19 +109,19 @@ namespace Raspoznavayka {
     }
 
     const dB_t& dB_t::operator+=( const dB_t& a ) {
-        this->data += a.data; return *this; 
+        return *this = *this + a;
     }
 
     const dB_t& dB_t::operator+=( const double& a ) {
-        this->data += a; return *this; 
+        return *this = *this + a;
     }
 
     const dB_t& dB_t::operator-=( const dB_t& a ) {
-        this->data -= a.data; return *this; 
+        return *this = *this - a;
     }
 
     const dB_t& dB_t::operator-=( const double& a ) {
-        this->data -= a; return *this; 
+        return *this = *this - a;
     }
 
     const dB_t& dB_t::operator%=( const dB_t& a ) {
