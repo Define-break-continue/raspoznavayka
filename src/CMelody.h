@@ -12,8 +12,8 @@ class CMelody {
     public:
     CMelody( std::vector< Aquila::SampleType >& );
     CMelody( std::vector< Raspoznavayka::interval_t >& intervals ) : intervals( intervals ) {}
-    std::vector< Raspoznavayka::interval_t >& getIntervals();
-    Raspoznavayka::mel_size_t getLength();
+    const std::vector< Raspoznavayka::interval_t >& getIntervals() const;
+    Raspoznavayka::mel_size_t getLength() const;
     
     protected:
     std::vector< Raspoznavayka::interval_t > intervals;

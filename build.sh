@@ -31,7 +31,6 @@ esac
 rm -rf build/
 mkdir build
 cd build/
-cmake -DCMAKE_BUILD_TYPE=Debug ../src/
-make
-
+cmake -DCMAKE_BUILD_TYPE=Debug ../src/ && \
+make && \
 [ ! -z ${run} ] && ./raspoznavayka

@@ -44,11 +44,12 @@
 
 #include "CHash.h"
 #include "CFixedHash.h"
-#include "CHashMatch.h"
 
 #include "CRecordedMelody.h"
 #include "CIDTag.h"
 #include "CInDBMelody.h"
+
+#include "CHashMatch.h"
 
 #include "CDataBase.h"
 

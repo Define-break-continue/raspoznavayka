@@ -1,6 +1,9 @@
 #include "raspoznavayka.h"
 
-int main() {
+//#define cdatabase_main main
+#define cinputaudio_main main
+
+int cinputaudio_main() {
     std::string a = "../resources/test.wav";
     CInputAudio inputAudio = CInputAudio(a);
     auto samples = inputAudio.getSignal();
@@ -17,3 +20,9 @@ int main() {
     return 0;
 }
 
+int cdatabase_main() {
+//	CDataBase::getInstance();
+	std::cout << "OK\n";
+
+	return 0;
+}

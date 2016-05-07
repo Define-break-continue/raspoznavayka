@@ -22,19 +22,20 @@ set_property(TARGET ooura PROPERTY CXX_STANDARD 11)
 
 set (HEADERS
     raspoznavayka.h
-    CInputAudio.h
-    CMelody.h
-    dB_t.h
-    interval_t.h
-    errors.h
 )
 set (SOURCES
     raspoznavayka.cpp
     CInputAudio.cpp
     CMelody.cpp
+    CInDBMelody.cpp
     dB_t.cpp
     interval_t.cpp
+	CDataBase.cpp
     errors.cpp
+    CHash.cpp
+    CHashMatch.cpp
+    CFixedHash.cpp
+    CRecordedMelody.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})
