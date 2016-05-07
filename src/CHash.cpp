@@ -7,11 +7,13 @@ CHash::CHash( const std::vector< Raspoznavayka::interval_t >& intervals ) {
     setHash( intervals );
 }
 
+/*
 template< typename CGeneralMelody >
 CHash::CHash( const CGeneralMelody& melody ) {
     arrows = std::vector< Raspoznavayka::arrow_t >( ( Raspoznavayka::mel_size_t ) melody.getLength() );
     setHash( melody.getIntervals() );
 }
+*/
 
 CHash::CHash( const CMelody& melody ) {
     arrows = std::vector< Raspoznavayka::arrow_t >( ( Raspoznavayka::mel_size_t ) melody.getLength() );
@@ -32,6 +34,10 @@ void CHash::setHash( const std::vector< Raspoznavayka::interval_t >& intervals )
     for ( std::size_t i = 0; i < intervals.size(); ++i ) {
         arrows[ i ] = sg( intervals[i] );
     }
+}
+
+void CHash::setHash( const std::vector< Raspoznavayka::arrow_t >& _arrows ) {
+    this->arrows = _arrows;
 }
 
 Raspoznavayka::mel_size_t CHash::getLength() const {
