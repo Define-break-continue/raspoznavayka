@@ -33,6 +33,7 @@
 #include "lib/aquila/source/FramesCollection.h"
 #include "lib/aquila/transform/Spectrogram.h"
 #include "lib/aquila/functions.h"
+#include "lib/aquila/tools/TextPlot.h"
 
 #include "errors.h"
 #include "dB_t.h"
