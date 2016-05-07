@@ -240,7 +240,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) {
             }
             CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
             CInDBMelody new_melody( intervals, idtag );
-            result.push_back( CHashMatch( new_melody, mel_chm_offs - fixed_hash_offset ) );
+            result.push_back( CHashMatch( &new_melody, mel_chm_offs - fixed_hash_offset ) );
         } // hash file read cycle
 		hash_file.close();
 

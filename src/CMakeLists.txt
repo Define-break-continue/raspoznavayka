@@ -33,6 +33,7 @@ set (SOURCES
 	CDataBase.cpp
     errors.cpp
     CHash.cpp
+    CHashMatch.cpp
     CFixedHash.cpp
     CRecordedMelody.cpp
 )
