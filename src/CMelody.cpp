@@ -4,6 +4,8 @@ CMelody::CMelody( std::vector< Aquila::SampleType >& waveform ) : intervals( 0 )
     setIntervals( waveform );
 }
 
+CMelody::CMelody( const std::vector< Raspoznavayka::interval_t >& intervals ) : intervals( intervals ) {}
+
 const std::vector< Raspoznavayka::interval_t >& CMelody::getIntervals() const {
     //const std::vector< Raspoznavayka::interval_t > result = intervals;
     return intervals;

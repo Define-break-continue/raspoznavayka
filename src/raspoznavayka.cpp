@@ -21,7 +21,12 @@ int cinputaudio_main() {
 }
 
 int cdatabase_main() {
-//	CDataBase::getInstance();
+    std::string a = "../resources/test.wav";
+    CInputAudio inputAudio = CInputAudio(a);
+    auto samples = inputAudio.getSignal();
+    CMelody melody( samples );
+	CInDBMelody DBmelody( melody );
+	CDataBase::getInstance().addMelody( DBmelody );
 	std::cout << "OK\n";
 
 	return 0;

@@ -43,7 +43,7 @@ CDataBase::CDataBase() {
      */
 }
 
-bool CDataBase::addMelody( CInDBMelody melody ) {
+bool CDataBase::addMelody( CInDBMelody melody ) const {
     std::ofstream id3_file;
     std::ofstream mel_file;
     std::ofstream index_file;
@@ -134,7 +134,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) {
     return true;
 }
 
-std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) {
+std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
 	std::vector< CHashMatch > result;
     std::ifstream index_file;
     std::ifstream id3_file;
@@ -251,7 +251,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) {
     return result;
 }
 
-std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) {
+std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const {
     char filename_chars[] = "0123456789ABCDEF";
     int filename_length =  ( CFixedHash::length + 3 ) / 4;
     char *res = new char[filename_length];
