@@ -1,6 +1,6 @@
 #include "raspoznavayka.h"
 
-const CDataBase CDataBase::getInstance() {
+const CDataBase& CDataBase::getInstance() {
     static CDataBase theSingleInstance;
     return theSingleInstance;
 }

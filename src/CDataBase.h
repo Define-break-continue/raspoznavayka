@@ -1,6 +1,6 @@
 class CDataBase {
 public:
-    static const CDataBase getInstance();
+    static const CDataBase& getInstance();
     std::vector< CHashMatch > searchByHash( CHash hash ) const;
     bool addMelody( CInDBMelody melody ) const;
 private:

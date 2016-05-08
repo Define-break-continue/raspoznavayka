@@ -103,6 +103,9 @@ namespace Raspoznavayka {
     note_t operator+( const note_t& a, const int& b );
     note_t operator+( const note_t& a, const std::size_t& b );
 
+    interval_t& operator++( interval_t& n );
+    interval_t operator+( const interval_t& a, const int& b );
+    interval_t operator+( const interval_t& a, const std::size_t& b );
     interval_t operator-( const note_t& a, const note_t& b );
     const std::vector< Aquila::FrequencyType > note_freq = []() {
         auto note = C;
