@@ -41,6 +41,20 @@ CDataBase::CDataBase() {
      * a database is shipped with its .config and both
      * are platform-independent
      */
+    struct stat sb;
+	stat( directory.c_str(), &sb );
+    if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
+		std::cout << "Directory \"" << directory << "\" does not exist. Trying to create one...\n";
+		mode_t directory_mode =   S_IRUSR | S_IWUSR
+		                        | S_IRGRP | S_IWGRP
+								| S_IROTH;
+		if( mkdir( directory.c_str(), directory_mode ) == 0 ) {
+			std::cout << "Directory \"" << directory << "\" created.\n";
+		} else {
+			std::cout << "ERROR: Couldn't create directory \"" << directory << "\"!\nAborting. \n";
+			assert( false );
+		}
+	}
 }
 
 bool CDataBase::addMelody( CInDBMelody melody ) const {
