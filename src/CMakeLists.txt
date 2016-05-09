@@ -4,7 +4,7 @@ set(PROJECT raspoznavayka)
 
 project (${PROJECT})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
 #include_directories (
 #    ./
 #)
