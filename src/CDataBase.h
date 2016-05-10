@@ -8,6 +8,7 @@ private:
     CDataBase( const CDataBase &a );
     CDataBase& operator=( const CDataBase &a );
     std::string makeFilenameOfHash( const CFixedHash &fixed_hash ) const;
+    bool check_create_directory( const char* );
     std::string directory;
     std::string index_filename;
     std::string id3_filename;

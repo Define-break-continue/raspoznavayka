@@ -32,7 +32,7 @@ int cdatabase_main() {
     for( uint8_t i = -5; i < 6; i++ )
         intervals.push_back( static_cast<Raspoznavayka::interval_t>(i) );
     CMelody melody( intervals );
-	CIDTag idtag = CIDTag();
+	CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
     CInDBMelody DBmelody( melody, idtag );
     CDataBase::getInstance().addMelody( DBmelody );
     std::cout << "OK\n";
