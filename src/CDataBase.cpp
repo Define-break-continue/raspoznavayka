@@ -86,11 +86,11 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
 
     // get positions at id3 and melody files, store
     // them in index file
-    std::streampos pos = id3_file.tellp() + static_cast<std::streamoff>( 1 );
+    std::streampos pos = id3_file.tellp();
     for( int i = 0; i < id3_file_max_size_koeff; ++i ) {
         index_file.write( ((char*)&pos) + id3_file_max_size_koeff - i - 1, 1 );
     }
-    pos = mel_file.tellp() + static_cast<std::streamoff>( 1 );
+    pos = mel_file.tellp();
     for( int i = 0; i < mel_file_max_size_koeff; ++i ) {
         index_file.write( ((char*)&pos) + mel_file_max_size_koeff - i - 1, 1 );
     }
@@ -118,8 +118,9 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
             hash_file.write( ((char*)&pos) + mel_number_size_koeff - i - 1, 1 );
         }
         // write fixed hash match offset
-        for( int i = 0; i < mel_number_size_koeff; ++i ) {
-            hash_file.write( ((char*)&pos) + mel_number_size_koeff - i - 1, 1 );
+        uint64_t offset_64b = offset;
+        for( int i = 0; i < mel_max_size_koeff; ++i ) {
+            hash_file.write( ((char*)&offset_64b) + mel_max_size_koeff - i - 1, 1 );
         }
         hash_file.close();
     }
@@ -217,7 +218,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             std::getline( id3_file, name );
             record_size -= id3_file.gcount();
             std::getline( id3_file, year );
-            if( ! id3_file.seekg( mel_start ).good() ) {
+            if( ! mel_file.seekg( mel_start ).good() ) {
                 std::cout << "ERROR: in mel file\n";
                 break;
             }
