@@ -96,7 +96,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
     }
     // make pos = index of the song currently being added
     pos = index_file.tellp() / ( mel_file_max_size_koeff + id3_file_max_size_koeff );
-    pos -= 1;
+    pos -= 2;
     id3_file.close();
     mel_file.close();
     index_file.close();
@@ -141,14 +141,14 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
 
         CFixedHash fixed_hash( hash, fixed_hash_offset );
         hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-        if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
+        if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() ) ) {
             std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
                 << "\nor some hash file in " << hash_file_subdir << '\n';
             return result;
         }
 
         // hash file read cycle
-        while( true ) { 
+        while( true ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
@@ -172,32 +172,32 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
             for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading id3_start\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading id3_start\n";
                     break;
                 }
                 id3_start = ( id3_start << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading mel_start\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading mel_start\n";
                     break;
                 }
                 mel_start = ( mel_start << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading id3_end\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading id3_end\n";
                     break;
                 }
                 id3_end = ( id3_end << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading mel_end\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading mel_end\n";
                     break;
                 }
                 mel_end = ( mel_end << 8 ) + (unsigned char) b;
@@ -223,13 +223,13 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
                 break;
             }
             std::vector< Raspoznavayka::interval_t > intervals( mel_end - mel_start );
-            for( uint64_t i = mel_start; i < mel_end; ++i ) {
+            for( uint64_t i = 0; i < mel_end - mel_start; ++i ) {
                 char interval;
                 if( mel_file.get( interval ).fail() ) {
                     std::cout << "ERROR: in mel file\n";
                     break;
                 }
-                intervals.push_back( static_cast< Raspoznavayka::interval_t >( interval ) );
+                intervals[i] = static_cast< Raspoznavayka::interval_t >( interval );
             }
             CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
             CInDBMelody new_melody( intervals, idtag );
