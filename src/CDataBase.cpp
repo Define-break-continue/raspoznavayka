@@ -55,7 +55,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
     if( index_file.tellp() == 0 ) {
         // if index file is empty, write initial zeros as the first entry address
         for( int i = 0; i < id3_file_max_size_koeff + mel_file_max_size_koeff; ++i ) {
-            index_file.write( "0", 1 );
+            index_file.write( "\0", 1 );
         }
         // and reset the other files
         mel_file.open( mel_filename, std::fstream::out | std::fstream::trunc | std::fstream::binary );
@@ -96,7 +96,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
     }
     // make pos = index of the song currently being added
     pos = index_file.tellp() / ( mel_file_max_size_koeff + id3_file_max_size_koeff );
-    pos -= 1;
+    pos -= 2;
     id3_file.close();
     mel_file.close();
     index_file.close();
@@ -118,8 +118,9 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
             hash_file.write( ((char*)&pos) + mel_number_size_koeff - i - 1, 1 );
         }
         // write fixed hash match offset
-        for( int i = 0; i < mel_number_size_koeff; ++i ) {
-            hash_file.write( ((char*)&pos) + mel_number_size_koeff - i - 1, 1 );
+        uint64_t offset_64b = offset;
+        for( int i = 0; i < mel_max_size_koeff; ++i ) {
+            hash_file.write( ((char*)&offset_64b) + mel_max_size_koeff - i - 1, 1 );
         }
         hash_file.close();
     }
@@ -127,7 +128,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
 }
 
 std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
-	std::vector< CHashMatch > result;
+    std::vector< CHashMatch > result;
     std::ifstream index_file;
     std::ifstream id3_file;
     std::ifstream mel_file;
@@ -138,16 +139,16 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
     
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
 
-		CFixedHash fixed_hash( hash, fixed_hash_offset );
-		hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-		if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
-			std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
-				<< "\nor some hash file in " << hash_file_subdir << '\n';
-			return result;
-		}
+        CFixedHash fixed_hash( hash, fixed_hash_offset );
+        hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
+        if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() ) ) {
+            std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
+                << "\nor some hash file in " << hash_file_subdir << '\n';
+            return result;
+        }
 
         // hash file read cycle
-        while( true ) { 
+        while( true ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
@@ -171,32 +172,32 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
             for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading id3_start\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading id3_start\n";
                     break;
                 }
                 id3_start = ( id3_start << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading mel_start\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading mel_start\n";
                     break;
                 }
                 mel_start = ( mel_start << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading id3_end\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading id3_end\n";
                     break;
                 }
                 id3_end = ( id3_end << 8 ) + (unsigned char) b;
             }
             for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
                 char b = 0;
-                if( ! hash_file.read( &b, 1 ).good() ) {
-                    std::cout << "ERROR: in hash file while reading mel_end\n";
+                if( ! index_file.read( &b, 1 ).good() ) {
+                    std::cout << "ERROR: in index file while reading mel_end\n";
                     break;
                 }
                 mel_end = ( mel_end << 8 ) + (unsigned char) b;
@@ -217,24 +218,24 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             std::getline( id3_file, name );
             record_size -= id3_file.gcount();
             std::getline( id3_file, year );
-            if( ! id3_file.seekg( mel_start ).good() ) {
+            if( ! mel_file.seekg( mel_start ).good() ) {
                 std::cout << "ERROR: in mel file\n";
                 break;
             }
             std::vector< Raspoznavayka::interval_t > intervals( mel_end - mel_start );
-            for( uint64_t i = mel_start; i < mel_end; ++i ) {
+            for( uint64_t i = 0; i < mel_end - mel_start; ++i ) {
                 char interval;
                 if( mel_file.get( interval ).fail() ) {
                     std::cout << "ERROR: in mel file\n";
                     break;
                 }
-                intervals.push_back( static_cast< Raspoznavayka::interval_t >( interval ) );
+                intervals[i] = static_cast< Raspoznavayka::interval_t >( interval );
             }
             CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
             CInDBMelody new_melody( intervals, idtag );
             result.push_back( CHashMatch( &new_melody, mel_chm_offs - fixed_hash_offset ) );
         } // hash file read cycle
-		hash_file.close();
+        hash_file.close();
 
     }
     id3_file.close();
@@ -269,20 +270,24 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const 
 
 bool CDataBase::check_create_directory( const char* dir ) {
     struct stat sb;
-	stat( dir, &sb );
-    if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
-		std::cout << "Directory \"" << dir << "\" does not exist. Trying to create one...\n";
-		mode_t directory_mode =   S_IRUSR | S_IWUSR | S_IXUSR
-		                        | S_IRGRP | S_IWGRP | S_IXGRP
-								| S_IROTH;
-		if( mkdir( dir, directory_mode ) == 0 ) {
-			std::cout << "Directory \"" << dir << "\" created.\n";
+    if( stat( dir, &sb ) != 0 ) {
+        std::cout << "Directory \"" << dir << "\" does not exist. Trying to create one...\n";
+        mode_t directory_mode =   S_IRUSR | S_IWUSR | S_IXUSR
+                                | S_IRGRP | S_IWGRP | S_IXGRP
+                                | S_IROTH;
+        if( mkdir( dir, directory_mode ) == 0 ) {
+            std::cout << "Directory \"" << dir << "\" created.\n";
             return true;
-		} else {
-			std::cout << "ERROR: Couldn't create directory \"" << dir << "\"!\nAborting. \n";
-			assert( false );
+        } else {
+            std::cout << "ERROR: Couldn't create directory \"" << dir << "\"!\nAborting. \n";
+            assert( false );
             return false;
-		}
-	}
+        }
+    }
+    else if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
+        std::cout << "ERROR: \"" << dir << "\" exists, but is not a directory.\nAborting. \n";
+        assert( false );
+        return false;
+    }
 }
 
