@@ -159,6 +159,9 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
                 }
                 mel_id = ( mel_id << 8 ) + (unsigned char) b;
             }
+            if( ! hash_file.good() ) {
+                break; // all melodies have been read from hash file
+            }
             // read fixed hash match offset in melody
             Raspoznavayka::mel_size_t mel_chm_offs = 0;
             for( int i = 0; i < mel_max_size_koeff; ++i ) {
@@ -167,7 +170,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
                 mel_chm_offs = ( mel_chm_offs << 8 ) + (unsigned char) b;
             }
             // get index entry on this song
-            index_file.seekg( mel_id * ( mel_number_size_koeff + mel_max_size_koeff ) );
+            index_file.seekg( mel_id * ( mel_number_size_koeff + mel_file_max_size_koeff ) );
             // get id3 and and melody addresses
             uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
             for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
@@ -233,7 +236,8 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             }
             CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
             CInDBMelody new_melody( intervals, idtag );
-            result.push_back( CHashMatch( &new_melody, mel_chm_offs - fixed_hash_offset ) );
+            result.push_back( CHashMatch( &new_melody, static_cast<int64_t>( mel_chm_offs ) 
+                                                       - static_cast<int64_t>( fixed_hash_offset ) ) );
         } // hash file read cycle
         hash_file.close();
 

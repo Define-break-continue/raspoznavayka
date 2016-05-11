@@ -36,7 +36,7 @@ int cdatabase_main() {
     */
 	CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
     CInDBMelody DBmelody( melody, idtag );
-    //CDataBase::getInstance().addMelody( DBmelody );
+    CDataBase::getInstance().addMelody( DBmelody );
     CHash hash ( melody ); 
     CDataBase::getInstance().searchByHash( hash );
     std::cout << "OK\n";
