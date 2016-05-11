@@ -41,20 +41,8 @@ CDataBase::CDataBase() {
      * a database is shipped with its .config and both
      * are platform-independent
      */
-    struct stat sb;
-	stat( directory.c_str(), &sb );
-    if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
-		std::cout << "Directory \"" << directory << "\" does not exist. Trying to create one...\n";
-		mode_t directory_mode =   S_IRUSR | S_IWUSR
-		                        | S_IRGRP | S_IWGRP
-								| S_IROTH;
-		if( mkdir( directory.c_str(), directory_mode ) == 0 ) {
-			std::cout << "Directory \"" << directory << "\" created.\n";
-		} else {
-			std::cout << "ERROR: Couldn't create directory \"" << directory << "\"!\nAborting. \n";
-			assert( false );
-		}
-	}
+    check_create_directory( directory.c_str() );
+    check_create_directory( hash_file_subdir.c_str() );
 }
 
 bool CDataBase::addMelody( CInDBMelody melody ) const {
@@ -93,18 +81,8 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
     mel_file.write( mel_char_intervals, mel_size );
     delete mel_char_intervals;
 
-    // write id3 tags
-    std::string artist, album, name, year;
-    std::cout << "Tell me of this new song!\nWho's the artist?\n";
-    std::cin >> artist;
-    std::cout << "Awh, I guessed it! And the album is...\n";
-    std::cin >> album;
-    std::cout << "Yeah, it's one of " << artist << "'s best! What's that song's name?\n";
-    std::cin >> name;
-    std::cout << "Names are unneeded. What year " << artist << " recorded it?\n";
-    std::cin >> year;
-    std::cout << "Anyway, I prefer debian_netinst.iso at 44100 Hz to this stuff!\n\n";
-    id3_file << artist << '\n' << album << '\n' << name << '\n' << year << '\n';
+    CIDTag idtag = melody.getIDTag();
+    id3_file << idtag.artist << '\n' << idtag.album << '\n' << idtag.title << '\n' << idtag.year << '\n';
 
     // get positions at id3 and melody files, store
     // them in index file
@@ -287,5 +265,24 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const 
     std::string ress( res );
     delete res;
     return hash_file_subdir + ress + hash_file_extension;
+}
+
+bool CDataBase::check_create_directory( const char* dir ) {
+    struct stat sb;
+	stat( dir, &sb );
+    if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
+		std::cout << "Directory \"" << dir << "\" does not exist. Trying to create one...\n";
+		mode_t directory_mode =   S_IRUSR | S_IWUSR | S_IXUSR
+		                        | S_IRGRP | S_IWGRP | S_IXGRP
+								| S_IROTH;
+		if( mkdir( dir, directory_mode ) == 0 ) {
+			std::cout << "Directory \"" << dir << "\" created.\n";
+            return true;
+		} else {
+			std::cout << "ERROR: Couldn't create directory \"" << dir << "\"!\nAborting. \n";
+			assert( false );
+            return false;
+		}
+	}
 }
 
