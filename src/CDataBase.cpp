@@ -127,7 +127,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
 }
 
 std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
-	std::vector< CHashMatch > result;
+    std::vector< CHashMatch > result;
     std::ifstream index_file;
     std::ifstream id3_file;
     std::ifstream mel_file;
@@ -138,13 +138,13 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
     
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
 
-		CFixedHash fixed_hash( hash, fixed_hash_offset );
-		hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-		if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
-			std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
-				<< "\nor some hash file in " << hash_file_subdir << '\n';
-			return result;
-		}
+        CFixedHash fixed_hash( hash, fixed_hash_offset );
+        hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
+        if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() && id3_file.is_open() ) ) {
+            std::cout << "ERROR: Couldn't open some DB file for writing in " << directory 
+                << "\nor some hash file in " << hash_file_subdir << '\n';
+            return result;
+        }
 
         // hash file read cycle
         while( true ) { 
@@ -234,7 +234,7 @@ std::vector< CHashMatch > CDataBase::searchByHash( CHash hash ) const {
             CInDBMelody new_melody( intervals, idtag );
             result.push_back( CHashMatch( &new_melody, mel_chm_offs - fixed_hash_offset ) );
         } // hash file read cycle
-		hash_file.close();
+        hash_file.close();
 
     }
     id3_file.close();
@@ -269,20 +269,24 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const 
 
 bool CDataBase::check_create_directory( const char* dir ) {
     struct stat sb;
-	stat( dir, &sb );
-    if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
-		std::cout << "Directory \"" << dir << "\" does not exist. Trying to create one...\n";
-		mode_t directory_mode =   S_IRUSR | S_IWUSR | S_IXUSR
-		                        | S_IRGRP | S_IWGRP | S_IXGRP
-								| S_IROTH;
-		if( mkdir( dir, directory_mode ) == 0 ) {
-			std::cout << "Directory \"" << dir << "\" created.\n";
+    if( stat( dir, &sb ) != 0 ) {
+        std::cout << "Directory \"" << dir << "\" does not exist. Trying to create one...\n";
+        mode_t directory_mode =   S_IRUSR | S_IWUSR | S_IXUSR
+                                | S_IRGRP | S_IWGRP | S_IXGRP
+                                | S_IROTH;
+        if( mkdir( dir, directory_mode ) == 0 ) {
+            std::cout << "Directory \"" << dir << "\" created.\n";
             return true;
-		} else {
-			std::cout << "ERROR: Couldn't create directory \"" << dir << "\"!\nAborting. \n";
-			assert( false );
+        } else {
+            std::cout << "ERROR: Couldn't create directory \"" << dir << "\"!\nAborting. \n";
+            assert( false );
             return false;
-		}
-	}
+        }
+    }
+    else if ( (sb.st_mode & S_IFMT) != S_IFDIR ) {
+        std::cout << "ERROR: \"" << dir << "\" exists, but is not a directory.\nAborting. \n";
+        assert( false );
+        return false;
+    }
 }
 
