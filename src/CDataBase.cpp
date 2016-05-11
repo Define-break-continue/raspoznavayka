@@ -55,7 +55,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
     if( index_file.tellp() == 0 ) {
         // if index file is empty, write initial zeros as the first entry address
         for( int i = 0; i < id3_file_max_size_koeff + mel_file_max_size_koeff; ++i ) {
-            index_file.write( "0", 1 );
+            index_file.write( "\0", 1 );
         }
         // and reset the other files
         mel_file.open( mel_filename, std::fstream::out | std::fstream::trunc | std::fstream::binary );
@@ -86,11 +86,11 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
 
     // get positions at id3 and melody files, store
     // them in index file
-    std::streampos pos = id3_file.tellp();
+    std::streampos pos = id3_file.tellp() + static_cast<std::streamoff>( 1 );
     for( int i = 0; i < id3_file_max_size_koeff; ++i ) {
         index_file.write( ((char*)&pos) + id3_file_max_size_koeff - i - 1, 1 );
     }
-    pos = mel_file.tellp();
+    pos = mel_file.tellp() + static_cast<std::streamoff>( 1 );
     for( int i = 0; i < mel_file_max_size_koeff; ++i ) {
         index_file.write( ((char*)&pos) + mel_file_max_size_koeff - i - 1, 1 );
     }
