@@ -4,7 +4,7 @@ public:
     std::vector< CHashMatch > searchByHash( CHash hash ) const;
     bool addMelody( CInDBMelody melody ) const;
 private:
-    CDataBase();
+    CDataBase();// const CDataBase& = delete
     CDataBase( const CDataBase &a );
     CDataBase& operator=( const CDataBase &a );
     std::string makeFilenameOfHash( const CFixedHash &fixed_hash ) const;

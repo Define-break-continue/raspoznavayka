@@ -1597,7 +1597,7 @@
         <dia:point val="33.9669,30.6025"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="33.9169,30.5525;53.7669,35.0525"/>
+        <dia:rectangle val="33.9169,30.5525;53.7669,35.8525"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="33.9669,30.6025"/>
@@ -1606,13 +1606,13 @@
         <dia:real val="19.75"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.4000000000000004"/>
+        <dia:real val="5.2000000000000002"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#CDataBase#</dia:string>
       </dia:attribute>
       <dia:attribute name="stereotype">
-        <dia:string>##</dia:string>
+        <dia:string>#singletone#</dia:string>
       </dia:attribute>
       <dia:attribute name="comment">
         <dia:string>##</dia:string>
@@ -2256,7 +2256,7 @@
         <dia:point val="19.9278,47.6576"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.1778,41.6619;20.6778,49.2576"/>
+        <dia:rectangle val="19.1778,41.6619;20.6778,48.4576"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
