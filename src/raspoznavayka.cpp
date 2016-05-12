@@ -20,7 +20,7 @@ int cinputaudio_main() {
     return 0;
 }
 
-int cdatabase_main() {
+int cdatabase_main( int argc, char *argv[] ) {
     
     std::string a = "../resources/test.wav";
     CInputAudio inputAudio = CInputAudio(a);
@@ -36,7 +36,8 @@ int cdatabase_main() {
     */
 	CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
     CInDBMelody DBmelody( melody, idtag );
-    //CDataBase::getInstance().addMelody( DBmelody );
+    if( argc > 1 && std::string( argv[1] ) == "-a" )
+        CDataBase::getInstance().addMelody( DBmelody );
     CHash hash ( melody ); 
     CDataBase::getInstance().searchByHash( hash );
     std::cout << "OK\n";
