@@ -27,6 +27,7 @@ set (SOURCES
     raspoznavayka.cpp
     CInputAudio.cpp
     CMelody.cpp
+	CIDTag.cpp
     CInDBMelody.cpp
     dB_t.cpp
     interval_t.cpp

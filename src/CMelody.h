@@ -4,14 +4,14 @@
  */
 
 namespace Raspoznavayka {
-    typedef std::uint16_t mel_size_t;
+    typedef std::uint32_t mel_size_t;
     typedef mel_size_t MelodySizeType;
 }
 
 class CMelody {
     public:
     CMelody( std::vector< Aquila::SampleType >& );
-    CMelody( std::vector< Raspoznavayka::interval_t >& intervals ) : intervals( intervals ) {}
+    CMelody( const std::vector< Raspoznavayka::interval_t >& intervals );
     const std::vector< Raspoznavayka::interval_t >& getIntervals() const;
     Raspoznavayka::mel_size_t getLength() const;
     

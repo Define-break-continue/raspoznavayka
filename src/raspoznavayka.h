@@ -25,6 +25,9 @@
 #include <typeinfo>
 #include <cmath>
 #include <limits>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "lib/aquila/global.h"
 #include "lib/aquila/transform/FftFactory.h"

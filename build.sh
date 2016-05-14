@@ -7,6 +7,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         -m) tgt=manual;;
         -r) run=1;;
+		-k) keep=1;;
     esac
     shift
 done
@@ -28,9 +29,14 @@ case $tgt in
         exit 1
         ;;
 esac
-rm -rf build/
-mkdir build
+if [ -z ${keep} ]; then
+	rm -rf build/
+	mkdir build
+fi
 cd build/
 cmake -DCMAKE_BUILD_TYPE=Debug ../src/ && \
 make && \
-[ ! -z ${run} ] && ./raspoznavayka
+if [ ! -z ${run} ]; then 
+	echo 'Running raspoznavayka...'
+	./raspoznavayka
+fi
