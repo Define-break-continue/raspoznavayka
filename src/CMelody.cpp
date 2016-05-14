@@ -5,7 +5,6 @@ CMelody::CMelody( std::vector< Aquila::SampleType >& waveform ) : intervals( 0 )
 }
 
 const std::vector< Raspoznavayka::interval_t >& CMelody::getIntervals() const {
-    //const std::vector< Raspoznavayka::interval_t > result = intervals;
     return intervals;
 }
 
@@ -14,15 +13,13 @@ Raspoznavayka::mel_size_t CMelody::getLength() const {
 }
 
 // helper functions
-
-
 inline Aquila::FrequencyType getFrequencyFromIteratorNumber( std::size_t i ) {
-    return SAMPLE_RATE * i / SAMPLES_PER_FRAME;
+    return ( (double) SAMPLE_RATE ) * i / SAMPLES_PER_FRAME;
 }
 
 // TODO: rewrite the function with the array of n=SAMPLE_RATE dl-s
 // filter A coefficient based on frequency. For the proof-of-concept, a linear approximation used
-Raspoznavayka::dB_t dL( Aquila::FrequencyType f ) {
+inline Raspoznavayka::dB_t dL( Aquila::FrequencyType f ) {
     double              x1 = 0,
                         x2 = 0;
     Raspoznavayka::dB_t y1 = 0,
@@ -57,26 +54,35 @@ Raspoznavayka::dB_t dL( Aquila::FrequencyType f ) {
 }
 
 std::vector< Raspoznavayka::note_t > getNotesVectorFromFrequency( Aquila::FrequencyType f ) {
-    auto nOfOctavesForSum = LEVEL_ADDITION_N_OCTAVES;
-    while( f < Raspoznavayka::note_freq[ LOWEST_NOTE ] ) {
-        f *= 2;
-	--nOfOctavesForSum;
-	if( !nOfOctavesForSum )
-	    return std::vector< Raspoznavayka::note_t >( 0 );
-    }
-    if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] )
+    // if frequency is wrong
+    if( f <= 0 ) {
         Raspoznavayka::frequencyError();
+    }
+    if( f < Raspoznavayka::note_freq[ LOWEST_NOTE ] ) {
+        return std::vector< Raspoznavayka::note_t >( static_cast< Raspoznavayka::note_t >( 0 ) );
+    }
+    if( [ f ]() { Aquila::FrequencyType fr = f;
+                 for( std::size_t i = 1; i < LEVEL_ADDITION_N_OCTAVES; ++i ) fr /= 2;
+		  return fr;
+        }() > Raspoznavayka::note_freq[ HIGHEST_NOTE ] )
+	return  std::vector< Raspoznavayka::note_t >( static_cast< Raspoznavayka::note_t >( 0 ) );
+    //iterator range
+    int octaveRestriction = LEVEL_ADDITION_N_OCTAVES;
+    while( f > Raspoznavayka::note_freq[ HIGHEST_NOTE ] ) {
+        f /= 2;
+	--octaveRestriction;
+    }
+    // find the note
     Raspoznavayka::note_t note = LOWEST_NOTE;
-    while( f > Raspoznavayka::note_freq[ note ] )
+    while( f >= Raspoznavayka::note_freq[ note ] ) {
         ++note;
-    std::vector< Raspoznavayka::note_t > result( nOfOctavesForSum );
-    for( std::size_t octave = 0; octave < nOfOctavesForSum; ++octave ) {
-	Raspoznavayka::note_t currentNote = static_cast< Raspoznavayka::note_t >( note + octave * HALFTONES_IN_AN_OCTAVE );
-	if( currentNote < HIGHEST_NOTE ) {
-            result[octave] = currentNote;
-	} else {
-	    result.resize( octave );
-	    return result;
+    }
+    // vector of notes or zeroes
+    std::vector< Raspoznavayka::note_t > result( octaveRestriction, static_cast< Raspoznavayka::note_t >( 0 ) );
+    for( int octave = 0; octave < octaveRestriction; ++octave ) {
+	Raspoznavayka::note_t currentNote = static_cast< Raspoznavayka::note_t >( note - octave * HALFTONES_IN_AN_OCTAVE );
+	if( currentNote <= HIGHEST_NOTE ) {
+           result[ octave ] = currentNote;
 	}
     }
     return result;
@@ -97,12 +103,13 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
         for( auto c = complexSpectrum.begin() + 1; c < complexSpectrum.end(); ++c, ++i ) {
             auto f = getFrequencyFromIteratorNumber( i );
             Raspoznavayka::dB_t L = Aquila::dB( *c ) << dL( f ); // real spectrum, filter A; << is arithmetical addition for dB_t
-            if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 ] ) {
+            if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 + ( LEVEL_ADDITION_N_OCTAVES - 1 ) * HALFTONES_IN_AN_OCTAVE ] ) {
 	        break;
 	    }
 	    auto notes = getNotesVectorFromFrequency( f );
             for( auto note : notes ) {
-                notePower[ note ] += L;
+                if( note != 0 )
+		    notePower[ note ] %= L; // % is rms
             }
         }
 	// now we have all notes' powers

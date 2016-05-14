@@ -22,11 +22,12 @@ namespace Raspoznavayka {
     }
 
     const dB_t operator%( const dB_t& a, const dB_t& b ) { 
-        return dB_t( a.data + b.data );
+        //return dB_t( a.data + b.data );
+	return rms( a, b );
     }
     
     const dB_t operator%( const double& a, const dB_t& b ) { 
-        return dB_t( a + b.data );
+        return rms( a, b );
     }
     
     const dB_t operator<<( const dB_t& a, const dB_t& b ) {
@@ -125,11 +126,14 @@ namespace Raspoznavayka {
     }
 
     const dB_t& dB_t::operator%=( const dB_t& a ) {
-        this->data += a.data; return *this; 
+        auto temp = rms( *this, a );
+        this->data = temp.data; return *this; 
     }
 
     const dB_t& dB_t::operator%=( const double& a ) {
-        this->data += a; return *this; 
+        // this->data += a; return *this; 
+        auto temp = rms( *this, a );
+        this->data = temp.data; return *this; 
     }
 
     const dB_t& dB_t::operator<<=( const dB_t& a ) {
@@ -162,6 +166,18 @@ namespace Raspoznavayka {
 
     const dB_t dB_t::operator--( int ) {
         auto temp = *this; this->data -= 1; return temp; 
+    }
+
+    const dB_t rms( const dB_t& a, const dB_t& b ) {
+        return dB_t( 10 * log10( ( pow( 10, a.data / 10 ) + pow( 10, b.data / 10 ) ) / 2 ) );
+    }
+
+    const dB_t rms( const double& a, const dB_t& b ) {
+        return dB_t( 10 * log10( ( pow( 10, a / 10 ) + pow( 10, b.data / 10 ) ) / 2 ) );
+    }
+
+    const dB_t rms( const dB_t& a, const double& b ) {
+        return dB_t( 10 * log10( ( pow( 10, a.data / 10 ) + pow( 10, b / 10 ) ) / 2 ) );
     }
 
     const double dB_t::min() {
