@@ -14,6 +14,10 @@
 #define HALFTONES_IN_AN_OCTAVE 12 // do not change
 #define MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES 5 // need to find the proper value
 
+#define LEVENSHTEIN_REPLACE_COST_COEFFICIENT 1
+#define LEVENSHTEIN_INSERT_COST 2
+#define LEVENSHTEIN_DELETE_COST 2
+
 #include <iostream>
 #include <fstream>
 #include <cstdint>
@@ -53,6 +57,7 @@
 #include "CInDBMelody.h"
 
 #include "CHashMatch.h"
+#include "math.h"
 
 #include "CDataBase.h"
 

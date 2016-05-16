@@ -37,6 +37,7 @@ set (SOURCES
     CHashMatch.cpp
     CFixedHash.cpp
     CRecordedMelody.cpp
+    math.cpp
 )
 
 source_group ("Header Files" FILES ${HEADERS})
