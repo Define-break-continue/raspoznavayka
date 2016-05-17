@@ -1,7 +1,23 @@
 #include "raspoznavayka.h"
 
-#define cdatabase_main main
+//#define cdatabase_main main
 //#define cinputaudio_main main
+#define levenshtein_main main
+
+
+int levenshtein_main() {
+    std::vector< Raspoznavayka::interval_t > a( 0 ), b( 0 );
+    for( int i = 0; i < 5; ++i ) {
+        a.push_back( static_cast< Raspoznavayka::interval_t >( i ) );
+    }
+    for( int i = 0; i < 5; ++i ) {
+        b.push_back( static_cast< Raspoznavayka::interval_t >( i ) );
+    }
+    b[3] = static_cast< Raspoznavayka::interval_t >( 0 );
+    std::vector< Raspoznavayka::interval_t > c( 0 );
+    c.push_back( static_cast< Raspoznavayka::interval_t >( 3 ) );
+    std::cout << Raspoznavayka::Math::levenshtein( a, b ) << std::endl;
+}
 
 int cinputaudio_main() {
     std::string a = "../resources/test.wav";
