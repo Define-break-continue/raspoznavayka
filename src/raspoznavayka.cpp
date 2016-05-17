@@ -1,8 +1,8 @@
 #include "raspoznavayka.h"
 
 //#define cdatabase_main main
-//#define cinputaudio_main main
-#define levenshtein_main main
+#define cinputaudio_main main
+//#define levenshtein_main main
 
 
 int levenshtein_main() {
@@ -50,7 +50,7 @@ int cdatabase_main( int argc, char *argv[] ) {
         intervals.push_back( static_cast<Raspoznavayka::interval_t>(i) );
     CMelody melody( intervals );
     */
-	CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
+        CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
     CInDBMelody DBmelody( melody, idtag );
     if( argc > 1 && std::string( argv[1] ) == "-a" )
         CDataBase::getInstance().addMelody( DBmelody );

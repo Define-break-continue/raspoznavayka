@@ -23,7 +23,7 @@ namespace Raspoznavayka {
 
     const dB_t operator%( const dB_t& a, const dB_t& b ) { 
         //return dB_t( a.data + b.data );
-	return rms( a, b );
+        return rms( a, b );
     }
     
     const dB_t operator%( const double& a, const dB_t& b ) { 
@@ -191,12 +191,12 @@ namespace Raspoznavayka {
     inline double dBSum( const double& a, const double& b ) {
         double max = std::max( a, b );
         double min = std::min( a, b );
-	return max + dBDifference( max, min );
+        return max + dBDifference( max, min );
     }
 
     inline double dBResidual( const double& a, const double& b ) {
         if( b > a ) return std::numeric_limits< double >::min();
-	if( b < 0 ) return dBSum( a, -b );
+        if( b < 0 ) return dBSum( a, -b );
         return a - dBDifference( a, b );
     }
 

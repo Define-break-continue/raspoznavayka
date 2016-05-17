@@ -54,22 +54,22 @@ namespace Raspoznavayka{
             end = databaseIntervalsFull.size() - begin;
             auto databaseIntervals = std::vector< Raspoznavayka::interval_t >( databaseIntervalsFull.begin() + begin, databaseIntervalsFull.begin() + begin + end );
             return levenshtein( recordedIntervals, databaseIntervals );
-    }
+		}
 
-    std::uint16_t getLevenshtein( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch ) {
-            return getLevenshtein( recordedMelody, *( hashMatch.melody ), hashMatch.offset );
-    }
+		std::uint16_t getLevenshtein( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch ) {
+			return getLevenshtein( recordedMelody, *( hashMatch.melody ), hashMatch.offset );
+		}
 
-    std::uint16_t getLevenshtein( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch, std::int64_t end ) {
-            return getLevenshtein( recordedMelody, *( hashMatch.melody ), hashMatch.offset, end );
-    }
+		std::uint16_t getLevenshtein( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch, std::int64_t end ) {
+			return getLevenshtein( recordedMelody, *( hashMatch.melody ), hashMatch.offset, end );
+		}
 
-        std::uint16_t getLevenshteinFixed( const CRecordedMelody& recordedMelody, const CInDBMelody& databaseMelody, std::int64_t offset ) {
-        return getLevenshtein( recordedMelody, databaseMelody, offset, recordedMelody.getLength() );
-    }
+			std::uint16_t getLevenshteinFixed( const CRecordedMelody& recordedMelody, const CInDBMelody& databaseMelody, std::int64_t offset ) {
+			return getLevenshtein( recordedMelody, databaseMelody, offset, recordedMelody.getLength() );
+		}
 
-    std::uint16_t getLevenshteinFixed( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch ) {
-            return getLevenshteinFixed( recordedMelody, *( hashMatch.melody ), hashMatch.offset );
-    }
+		std::uint16_t getLevenshteinFixed( const CRecordedMelody& recordedMelody, const CHashMatch& hashMatch ) {
+			return getLevenshteinFixed( recordedMelody, *( hashMatch.melody ), hashMatch.offset );
+		}
     }
 }

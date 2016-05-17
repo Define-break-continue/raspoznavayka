@@ -42,9 +42,9 @@ namespace Raspoznavayka {
         friend const bool operator<=( const dB_t& a, const dB_t& b );
         friend const bool operator>( const dB_t& a, const dB_t& b );
         friend const bool operator<( const dB_t& a, const dB_t& b );
-	friend const dB_t rms( const dB_t& a, const dB_t& b );
-	friend const dB_t rms( const double& a, const dB_t& b );
-	friend const dB_t rms( const dB_t& a, const double& b );
+        friend const dB_t rms( const dB_t& a, const dB_t& b );
+        friend const dB_t rms( const double& a, const dB_t& b );
+        friend const dB_t rms( const dB_t& a, const double& b );
         friend std::ostream& operator<<( std::ostream& os, const dB_t& L );
         static const double min();
         static const double max();
