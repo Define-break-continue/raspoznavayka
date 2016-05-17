@@ -88,15 +88,15 @@ namespace Raspoznavayka {
 
     enum note_t : std::uint8_t {
         C = 1,
-	    Db,  D,  Eb,  E,  F,  Gb,  G,  Ab,  A,  Bb,  B,
-	c,  db,  d,  eb,  e,  f,  gb,  g,  ab,  a,  bb,  b,
+            Db,  D,  Eb,  E,  F,  Gb,  G,  Ab,  A,  Bb,  B,
+        c,  db,  d,  eb,  e,  f,  gb,  g,  ab,  a,  bb,  b,
         c1, d1b, d1, e1b, e1, f1, g1b, g1, a1b, a1, b1b, b1,
         c2, d2b, d2, e2b, e2, f2, g2b, g2, a2b, a2, b2b, b2,
         c3, d3b, d3, e3b, e3, f3, g3b, g3, a3b, a3, b3b, b3,
         c4, d4b, d4, e4b, e4, f4, g4b, g4, a4b, a4, b4b, b4,
         c5, d5b, d5, e5b, e5, f5, g5b, g5, a5b, a5, b5b, b5,
-	c6, // c6 is used as the top freq of b5 interval; octaves 4 and 5 for obertones power count
-	P = 0, p = 0, PAUSE = 0
+        c6, // c6 is used as the top freq of b5 interval; octaves 4 and 5 for obertones power count
+        P = 0, p = 0, PAUSE = 0
     };
 
     note_t& operator++( note_t& n );
@@ -110,9 +110,10 @@ namespace Raspoznavayka {
     const std::vector< Aquila::FrequencyType > note_freq = []() {
         auto note = C;
         std::vector< Aquila::FrequencyType > v( HIGHEST_NOTE + LEVEL_ADDITION_N_OCTAVES * HALFTONES_IN_AN_OCTAVE + 1 );
-        for( auto frequency = v.begin(); frequency < v.end(); ++frequency, ++note ) {
+        for( auto frequency = v.begin() + 1; frequency < v.end(); ++frequency, ++note ) {
             *frequency = 65.406 * pow( 2, (double) ( note - 1 ) / 12.0 - 1.0 / 24.0 );
-	}
-	return v;
+        }
+        v[ 0 ] = 0;
+        return v;
     }();
 }

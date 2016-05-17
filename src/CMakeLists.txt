@@ -27,11 +27,11 @@ set (SOURCES
     raspoznavayka.cpp
     CInputAudio.cpp
     CMelody.cpp
-	CIDTag.cpp
+        CIDTag.cpp
     CInDBMelody.cpp
     dB_t.cpp
     interval_t.cpp
-	CDataBase.cpp
+        CDataBase.cpp
     errors.cpp
     CHash.cpp
     CHashMatch.cpp
