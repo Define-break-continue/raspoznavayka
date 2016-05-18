@@ -424,7 +424,8 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
 std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const {
     char filename_chars[] = "0123456789ABCDEF";
     int filename_length =  ( CFixedHash::length + 3 ) / 4;
-    char *res = new char[filename_length];
+    char *res = new char[ filename_length + 1 ];
+    res[ filename_length + 1 ] = 0;
     int pow = 1;
     for( int a = 0; a < CFixedHash::length; ++a ) {
         if( a % 4 == 0 ) {
