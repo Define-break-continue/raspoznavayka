@@ -180,6 +180,10 @@ namespace Raspoznavayka {
         return dB_t( 10 * log10( ( pow( 10, a.data / 10 ) + pow( 10, b / 10 ) ) / 2 ) );
     }
 
+    const double abs( const dB_t& a ) {
+        return a > 0 ? a.data : -a.data;
+    }
+
     const double dB_t::min() {
         return std::numeric_limits< double >::min(); 
     }
