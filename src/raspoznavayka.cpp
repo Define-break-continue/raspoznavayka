@@ -7,50 +7,51 @@
 
 int the_mainest_main( int argc, char *argv[] ) {
     
-	for( int argn = 1; argn < argc; ++argn ) {
-		std::string args = std::string( argv[argn] );
-		if( args == "-a" ) { // add to database
-			if( argn < argc ) {
-				std::string audio_file = std::string( argv[++argn] );
-				CInputAudio inputAudio = CInputAudio( audio_file );
-				auto samples = inputAudio.getSignal();
-				CMelody melody( samples );
-				//CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
-				CIDTag idtag = CIDTag(); // ask for tag values
-				CInDBMelody DBmelody( melody, idtag );
-				if( CDataBase::getInstance().addMelody( DBmelody ) ) {
-					std::cout << "Melody added to database\n";
-				} else {
-					std::cout << "Something has gone wrong\n";
-				}
-			}
-			else {
-				std::cout << "No audio file name to add provided!\n";
-			}
-		}
-		else if( args == "-s" ) { // sarch
-			if( argn < argc ) {
-				std::string audio_file = std::string( argv[++argn] );
-				CInputAudio inputAudio = CInputAudio( audio_file );
-				auto samples = inputAudio.getSignal();
-				CRecordedMelody rec_melody( samples );
-				CHash hash ( rec_melody ); 
-				std::vector< CInDBMelody > db_search =
-					CDataBase::getInstance().searchByHash( hash );
-				for( std::vector< CInDBMelody >::iterator i = db_search.begin();
-						i < db_search.end(); ++i ) {
-					std::cout << (*i).getIDTag().artist << " - " 
-						      << (*i).getIDTag().artist << " : "
-							  << Raspoznavayka::Math::getLevenshtein( 
-									  rec_melody, (*i) ) 
-							  << '\n';
-				}
-			}
-			else {
-				std::cout << "No audio file name to add provided!\n";
-			}
-		}
-	}
+    for( int argn = 1; argn < argc; ++argn ) {
+        std::string args = std::string( argv[argn] );
+        if( args == "-a" ) { // add to database
+            if( argn < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CMelody melody( samples );
+                //CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
+                CIDTag idtag = CIDTag(); // ask for tag values
+                idtag.interactive_fill();
+                CInDBMelody DBmelody( melody, idtag );
+                if( CDataBase::getInstance().addMelody( DBmelody ) ) {
+                    std::cout << "Melody added to database\n";
+                } else {
+                    std::cout << "Something has gone wrong\n";
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+        else if( args == "-s" ) { // sarch
+            if( argn < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CRecordedMelody rec_melody( samples );
+                CHash hash ( rec_melody ); 
+                std::vector< CInDBMelody > db_search =
+                    CDataBase::getInstance().searchByHash( hash );
+                for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+                        i < db_search.end(); ++i ) {
+                    std::cout << (*i).getIDTag().artist << " - " 
+                              << (*i).getIDTag().title << " : "
+                              << Raspoznavayka::Math::getLevenshtein( 
+                                      rec_melody, (*i) ) 
+                              << '\n';
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+    }
     
     return 0;
 }
