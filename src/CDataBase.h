@@ -1,7 +1,8 @@
 class CDataBase {
 public:
     static const CDataBase& getInstance();
-    std::vector< CHashMatch > searchByHash( CHash hash ) const;
+    std::vector< CHashMatch > searchByHash_offs( CHash hash ) const;
+    std::vector< CInDBMelody > searchByHash( CHash hash ) const;
     bool addMelody( CInDBMelody melody ) const;
 private:
     CDataBase();// const CDataBase& = delete
