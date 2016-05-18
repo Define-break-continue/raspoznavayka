@@ -5,9 +5,9 @@ public:
     std::vector< CInDBMelody > searchByHash( CHash hash ) const;
     bool addMelody( CInDBMelody melody ) const;
 private:
-    CDataBase();// const CDataBase& = delete
-    CDataBase( const CDataBase &a );
-    CDataBase& operator=( const CDataBase &a );
+    CDataBase();
+    CDataBase( const CDataBase &a ) = delete;
+    CDataBase& operator=( const CDataBase &a ) = delete;
     std::string makeFilenameOfHash( const CFixedHash &fixed_hash ) const;
     bool check_create_directory( const char* );
     std::string directory;

@@ -5,11 +5,6 @@ const CDataBase& CDataBase::getInstance() {
     return theSingleInstance;
 }
 
-CDataBase::CDataBase( CDataBase const& ) {
-    // singletone!
-    assert( false );
-}
-
 CDataBase::CDataBase() {
     /* 
      * This will be read from a .config file at runtime
