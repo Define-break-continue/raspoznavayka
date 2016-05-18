@@ -90,13 +90,28 @@ std::vector< Raspoznavayka::note_t > getNotesVectorFromFrequency( Aquila::Freque
     return result;
 }
 
+Raspoznavayka::note_t getNoteFromFrequency( Aquila::FrequencyType f ) {
+    if( f <= 0 ) {
+        Raspoznavayka::frequencyError();
+    }
+    if( f < Raspoznavayka::note_freq[ LOWEST_NOTE ] || f > Raspoznavayka::note_freq[ HIGHEST_NOTE + ( LEVEL_ADDITION_N_OCTAVES - 1 ) * HALFTONES_IN_AN_OCTAVE ] ) {
+        return static_cast< Raspoznavayka::note_t >( 0 );
+    }
+    // find the note
+    Raspoznavayka::note_t note = LOWEST_NOTE;
+    while( f >= Raspoznavayka::note_freq[ note ] )
+        ++note;
+    return note;
+}
+
 void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
     Aquila::SignalSource signal( waveform, SAMPLE_RATE );
     Aquila::FramesCollection frames( signal, SAMPLES_PER_FRAME, SAMPLES_PER_OVERLAP );
     auto fft = Aquila::FftFactory::getFft( SAMPLES_PER_FRAME ); // create an fft object
     Aquila::SpectrumType complexSpectrum( SAMPLES_PER_FRAME, 0 );
-    std::vector< Raspoznavayka::dB_t > notePower( HIGHEST_NOTE + 1, Raspoznavayka::dB_t().min() ); // for note power count; note_index == note
-    std::vector< Raspoznavayka::note_t > melody( 0 );
+//    std::vector< Raspoznavayka::dB_t > notePower( HIGHEST_NOTE + 1, Raspoznavayka::dB_t().min() ); // for note power count; note_index == note
+    std::vector< Raspoznavayka::dB_t > notePower( HIGHEST_NOTE + ( LEVEL_ADDITION_N_OCTAVES - 1 ) * HALFTONES_IN_AN_OCTAVE + 1, Raspoznavayka::dB_t().min() ); // for note power count; note_index == note
+    std::vector< Raspoznavayka::note_t > melody;
     Raspoznavayka::dB_t currentNoteLevel = Raspoznavayka::dB_t().min();
 
     for( auto frame : frames ) { // for each frame
@@ -108,22 +123,42 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
             if( f >= Raspoznavayka::note_freq[ HIGHEST_NOTE + 1 + ( LEVEL_ADDITION_N_OCTAVES - 1 ) * HALFTONES_IN_AN_OCTAVE ] ) {
                 break;
             }
-            auto notes = getNotesVectorFromFrequency( f );
-            for( auto note : notes ) {
-                if( note != 0 )
+//            auto notes = getNotesVectorFromFrequency( f );
+            auto note = getNoteFromFrequency( f );
+//            for( auto note : notes ) {
+//                if( note != 0 )
+//                    if( notePower[ note ] > Raspoznavayka::dB_t().min() )
+//                        notePower[ note ] %= L; // % is rms
+//                    else
+//                        notePower[ note ] = L;
+//            }
+            if( note )
+                if( notePower[ note ] > Raspoznavayka::dB_t().min() )
                     notePower[ note ] %= L; // % is rms
+                else
+                    notePower[ note ] = L;
+        }
+        for( auto note = LOWEST_NOTE; note <= HIGHEST_NOTE; ++note ) {
+            for( std::size_t i = 1; i < LEVEL_ADDITION_N_OCTAVES; ++i ) {
+                auto additionNote = static_cast< Raspoznavayka::note_t >( static_cast< std::uint8_t >( note ) + i * HALFTONES_IN_AN_OCTAVE );
+                if( additionNote < Raspoznavayka::note_freq.size() )
+                    notePower[ note ] += notePower[ additionNote ];
             }
         }
         // now we have all notes' powers
         auto loudestNotePoiner = std::max_element( notePower.begin(), notePower.end() );
         Raspoznavayka::note_t loudestNote = static_cast< Raspoznavayka::note_t >( std::distance( notePower.begin(), loudestNotePoiner ) );
         Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
-        if( melody.empty() || currentNoteLevel >> loudestNoteLevel <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
+std::cout<<loudestNote<<' '<<loudestNoteLevel<<'\n';
+std::cout<<"curr="<<(double)currentNoteLevel<<" loudest="<<(double)loudestNoteLevel<<std::endl;
+std::cout<<"curr-loudest="<< (currentNoteLevel >> loudestNoteLevel)<<std::endl;
+        if( melody.empty() || ( loudestNoteLevel >> currentNoteLevel ) <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
+std::cout<<"entered\n";
             melody.push_back( loudestNote );
             currentNoteLevel = loudestNoteLevel;
         }
         std::fill( notePower.begin(), notePower.end(), Raspoznavayka::dB_t().min() ); // reset notePower vector values
-        currentNoteLevel = Raspoznavayka::dB_t().min();
+        loudestNoteLevel = Raspoznavayka::dB_t().min();
     }
 
     // now we have the melody recorded in notes
