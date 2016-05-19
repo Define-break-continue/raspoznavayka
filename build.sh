@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-#cd $( git rev-parse --show-toplevel )
+cd $( git rev-parse --show-toplevel )
 
 tgt="$(gcc -v 2>&1 |grep -e '^Target' |cut -d' ' -f2-)";
 case $tgt in
@@ -50,6 +50,7 @@ if [ ! -z ${del} ]; then
     rm -rf build/
     mkdir build
 fi
+[ ! -d build ] && mkdir build
 cd build/
 cmake -DCMAKE_BUILD_TYPE=Debug ../src/ && \
 make && \
