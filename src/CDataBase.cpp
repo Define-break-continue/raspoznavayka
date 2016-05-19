@@ -433,6 +433,8 @@ std::vector< CInDBMelody > CDataBase::getEverything() const {
         mel_start = ( mel_start << 8 ) + (unsigned char) b;
     }
     while( index_file.good() && index_file.peek() != EOF ) {
+		id3_end = 0;
+		mel_end = 0;
         // get id3 and and melody addresses
         for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
             char b = 0;
