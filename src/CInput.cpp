@@ -1,5 +1,4 @@
-#include "record_final.h"
-#include <typeinfo>
+#include "raspoznavayka.h"
 
 CInput::CInput()
 {

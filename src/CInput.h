@@ -1,12 +1,8 @@
-#include "RtAudio.h"
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
+#include "raspoznavayka.h"
+#include "lib/rtaudio-4.1.2/RtAudio.h"
 #include <stdio.h>
-#include "spline.h"
-
-#include<fstream>
-#include<string.h>
+//#include "spline.h"
+//#include "record_final.h"
 
 typedef double MY_TYPE;
 #define FORMAT RTAUDIO_FLOAT64
