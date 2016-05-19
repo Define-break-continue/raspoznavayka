@@ -46,6 +46,7 @@
 #include "dB_t.h"
 
 #include "CInputAudio.h"
+#include "CInput.h"
 
 #include "interval_t.h"
 #include "CMelody.h"

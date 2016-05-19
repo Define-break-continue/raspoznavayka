@@ -1,11 +1,11 @@
 #include "raspoznavayka.h"
 
-CIDTag::CIDTag( std::string title,
-                std::string artist,
+CIDTag::CIDTag( std::string artist,
                 std::string album,
-                std::int16_t year ) : title( title ),
-                                      artist( artist ),
+                std::string title,
+                std::int16_t year ) : artist( artist ),
                                       album( album ),
+                                      title( title ),
                                       year( year ) {}
 
 void CIDTag::interactive_fill() {

@@ -1,8 +1,86 @@
 #include "raspoznavayka.h"
 
 //#define cdatabase_main main
-#define cinputaudio_main main
+//#define cinputaudio_main main
 //#define levenshtein_main main
+#define the_mainest_main main
+
+int the_mainest_main( int argc, char *argv[] ) {
+    
+    for( int argn = 1; argn < argc; ++argn ) {
+        std::string args = std::string( argv[argn] );
+        if( args == "-a" ) { // add to database
+            if( argn < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CMelody melody( samples );
+                //CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
+                CIDTag idtag = CIDTag(); // ask for tag values
+                idtag.interactive_fill();
+                CInDBMelody DBmelody( melody, idtag );
+                if( CDataBase::getInstance().addMelody( DBmelody ) ) {
+                    std::cout << "Melody added to database\n";
+                } else {
+                    std::cout << "Something has gone wrong\n";
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+        else if( args == "-s" ) { // sarch
+            if( argn + 1 < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CRecordedMelody rec_melody( samples );
+                CHash hash ( rec_melody ); 
+                std::vector< CInDBMelody > db_search =
+                    CDataBase::getInstance().searchByHash( hash );
+                for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+                        i < db_search.end(); ++i ) {
+                    std::cout << "intervals: ";
+                    (*i).printIntervals();
+                    std::cout << (*i).getIDTag().artist << " - " 
+                              << (*i).getIDTag().title << " : "
+                              << Raspoznavayka::Math::getLevenshtein( 
+                                      rec_melody, (*i) ) 
+                              << '\n';
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+        else if( args == "-k" ) { // kostyl sarch
+            if( argn + 1 < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CRecordedMelody rec_melody( samples );
+                CHash hash ( rec_melody ); 
+                std::vector< CInDBMelody > db_search =
+                    CDataBase::getInstance().getEverything();
+                for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+                        i < db_search.end(); ++i ) {
+                    std::cout << "intervals: ";
+                    (*i).printIntervals();
+                    std::cout << (*i).getIDTag().artist << " - " 
+                              << (*i).getIDTag().title << " : "
+                              << Raspoznavayka::Math::getLevenshtein( 
+                                      rec_melody, (*i) ) 
+                              << '\n';
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+    }
+    
+    return 0;
+}
 
 
 int levenshtein_main() {
@@ -50,7 +128,7 @@ int cdatabase_main( int argc, char *argv[] ) {
         intervals.push_back( static_cast<Raspoznavayka::interval_t>(i) );
     CMelody melody( intervals );
     */
-        CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
+    CIDTag idtag = CIDTag( "title", "artist", "album", 1999 );
     CInDBMelody DBmelody( melody, idtag );
     if( argc > 1 && std::string( argv[1] ) == "-a" )
         CDataBase::getInstance().addMelody( DBmelody );

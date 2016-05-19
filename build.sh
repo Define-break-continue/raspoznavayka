@@ -3,14 +3,27 @@
 # To run program after build, use build.sh -r
 #
 
+if [ $(date  +"%Y%m%d") -le 20160520 ]; then
+    echo ""
+    echo "Note the new build.sh syntax!    <<<   <<<   <<<   <<<   <<<   <<<   <<<   <<<";
+    echo "$0 [-d] [-r] -- (args...)";
+    echo "Use -r to run raspoznavayka after build";
+    echo "    -d to delete build/ directory before build (it's safe)";
+    echo "    -- (args...) to pass args to raspoznavayka when running";
+    echo ""
+fi
+
 while [ $# -gt 0 ]; do
     case "$1" in
         -m) tgt=manual;;
         -r) run=1;;
-		-k) keep=1;;
+        -d) del=1;;
+        --) break;;
     esac
     shift
 done
+
+cd $( git rev-parse --show-toplevel )
 
 tgt="$(gcc -v 2>&1 |grep -e '^Target' |cut -d' ' -f2-)";
 case $tgt in
@@ -18,9 +31,13 @@ case $tgt in
         cp src/lib/aquila/libAquila.a.86 src/lib/aquila/libAquila.a
         cp src/lib/aquila/libOoura_fft.a.86 src/lib/aquila/libOoura_fft.a
         ;;
-    x86_64*|amd64*)
+    x86_64*linux*|amd64*linux*)
         cp src/lib/aquila/libAquila.a.64 src/lib/aquila/libAquila.a
         cp src/lib/aquila/libOoura_fft.a.64 src/lib/aquila/libOoura_fft.a
+        ;;
+    x86_64-apple-darwin*)
+        cp src/lib/aquila/libAquila.a.x86_64-apple-darwin15.4.0 src/lib/aquila/libAquila.a
+        cp src/lib/aquila/libOoura_fft.a.x86_64-apple-darwin15.4.0 src/lib/aquila/libOoura_fft.a
         ;;
     "manual") ;;
     *)
@@ -29,14 +46,21 @@ case $tgt in
         exit 1
         ;;
 esac
-if [ -z ${keep} ]; then
-	rm -rf build/
-	mkdir build
+if [ ! -z ${del} ]; then
+    rm -rf build/
+    mkdir build
 fi
+[ ! -d build ] && mkdir build
 cd build/
-cmake -DCMAKE_BUILD_TYPE=Debug ../src/ && \
-make && \
+[ ! -d rtaudio ] && mkdir rtaudio
+cd rtaudio
+cmake ../../src/lib/rtaudio-4.1.2/ || exit 1
+make || exit 1
+cd ..
+cmake -DCMAKE_BUILD_TYPE=Debug ../src/ || exit 1
+make || exit 1
 if [ ! -z ${run} ]; then 
-	echo 'Running raspoznavayka...'
-	./raspoznavayka
+    echo 'Running raspoznavayka...'
+    cd ..
+    build/raspoznavayka $@
 fi
