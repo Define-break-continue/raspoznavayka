@@ -102,10 +102,11 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
         CFixedHash fixed_hash( hash, offset );
         // open the appropriate hash file to write current fixed hash match to 
         std::ofstream hash_file;
+        std::string hash_filename = makeFilenameOfHash( fixed_hash );
         hash_file.open( makeFilenameOfHash( fixed_hash ),
                        std::fstream::out | std::fstream::app | std::fstream::binary );
         if( ! hash_file.is_open() ) {
-            std::cout << "ERROR: Couldn't open DB hash file for writing: " << makeFilenameOfHash( fixed_hash ) << '\n';
+            std::cout << "ERROR: Couldn't open hash file for writing: " << hash_filename << '\n';
             return false;
         }
         // write melody id
@@ -130,15 +131,8 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
     // hash offset cycle
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
 
-        CFixedHash fixed_hash( hash, fixed_hash_offset );
-        hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-        if( ! hash_file.is_open() ) {
-            std::cout << "ERROR: Couldn't open hash file for reading: " << makeFilenameOfHash( fixed_hash ) << '\n';
-            return result;
-        }
-
         // fixed hash file read cycle
-        while( hash_file.good() && hash_file.peek() != EOF ) {
+        while( hash_file.is_open() && hash_file.good() && hash_file.peek() != EOF ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
@@ -276,15 +270,8 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
     // hash offset cycle
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
 
-        CFixedHash fixed_hash( hash, fixed_hash_offset );
-        hash_file.open( makeFilenameOfHash( fixed_hash ), std::fstream::in | std::fstream::binary );
-        if( ! hash_file.is_open() ) {
-            std::cout << "ERROR: Couldn't open hash file for writing: " << makeFilenameOfHash( fixed_hash ) << '\n';
-            return result;
-        }
-
         // fixed hash file read cycle
-        while( hash_file.good() && hash_file.peek() != EOF ) {
+        while( hash_file.is_open() && hash_file.good() && hash_file.peek() != EOF ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
@@ -427,26 +414,26 @@ std::vector< CInDBMelody > CDataBase::getEverything() const {
         return result;
     }
 
+    uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
+    // get id3 and and melody addresses
+    for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
+        char b = 0;
+        if( ! index_file.read( &b, 1 ).good() ) {
+            std::cout << "ERROR: in index file while reading id3_start\n";
+            break;
+        }
+        id3_start = ( id3_start << 8 ) + (unsigned char) b;
+    }
+    for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
+        char b = 0;
+        if( ! index_file.read( &b, 1 ).good() ) {
+            std::cout << "ERROR: in index file while reading mel_start\n";
+            break;
+        }
+        mel_start = ( mel_start << 8 ) + (unsigned char) b;
+    }
     while( index_file.good() && index_file.peek() != EOF ) {
-        int64_t mel_id;
         // get id3 and and melody addresses
-        uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
-        for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
-            char b = 0;
-            if( ! index_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in index file while reading id3_start\n";
-                break;
-            }
-            id3_start = ( id3_start << 8 ) + (unsigned char) b;
-        }
-        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
-            char b = 0;
-            if( ! index_file.read( &b, 1 ).good() ) {
-                std::cout << "ERROR: in index file while reading mel_start\n";
-                break;
-            }
-            mel_start = ( mel_start << 8 ) + (unsigned char) b;
-        }
         for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
             char b = 0;
             if( ! index_file.read( &b, 1 ).good() ) {
@@ -495,6 +482,8 @@ std::vector< CInDBMelody > CDataBase::getEverything() const {
         CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
         CInDBMelody new_melody( intervals, idtag );
         result.push_back( new_melody );
+        id3_start = id3_end;
+        mel_start = mel_end;
     } // end of found melodies' data read cycle
 
     id3_file.close();
