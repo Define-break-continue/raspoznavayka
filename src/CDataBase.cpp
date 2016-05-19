@@ -138,7 +138,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
         }
 
         // fixed hash file read cycle
-        while( true ) {
+        while( hash_file.good() && hash_file.peek() != EOF ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
@@ -231,7 +231,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
         // read id3 tags
         assert( id3_start < id3_end );
         assert( mel_start < mel_end );
-        std::string artist, album, name, year;
+        std::string artist, album, title, year;
         uint64_t record_size = id3_end - id3_start;
         if( ! id3_file.seekg( id3_start ).good() ) {
             std::cout << "ERROR: in id3 file\n";
@@ -241,7 +241,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
         record_size -= id3_file.gcount();
         std::getline( id3_file, album );
         record_size -= id3_file.gcount();
-        std::getline( id3_file, name );
+        std::getline( id3_file, title );
         record_size -= id3_file.gcount();
         std::getline( id3_file, year );
         if( ! mel_file.seekg( mel_start ).good() ) {
@@ -257,7 +257,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
             }
             intervals[i] = static_cast< Raspoznavayka::interval_t >( interval );
         }
-        CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
+        CIDTag idtag( artist, album, title, std::atoi( year.c_str() ) );
         CInDBMelody new_melody( intervals, idtag );
         result.push_back( new_melody );
     } // end of found melodies' data read cycle
@@ -284,19 +284,17 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
         }
 
         // fixed hash file read cycle
-        while( true ) {
+        while( hash_file.good() && hash_file.peek() != EOF ) {
             // read melody id
             uint64_t mel_id = 0;
             for( int i = 0; i < mel_number_size_koeff; ++i ) {
                 char b = 0;
                 hash_file.read( &b, 1 );
                 if( ! hash_file.good() ) {
-                    break; // all melodies have been read from hash file
+                    std::cout << "ERROR: while reading hash file\n";
+                    break;
                 }
                 mel_id = ( mel_id << 8 ) + (unsigned char) b;
-            }
-            if( ! hash_file.good() ) {
-                break; // all melodies have been read from hash file
             }
             // read fixed hash match offset in melody
             Raspoznavayka::mel_size_t mel_chm_offs = 0;
@@ -415,6 +413,96 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
     index_file.close();
     return result;
 }
+
+std::vector< CInDBMelody > CDataBase::getEverything() const {
+    std::vector< CInDBMelody > result;
+    std::ifstream index_file;
+    std::ifstream id3_file;
+    std::ifstream mel_file;
+    index_file.open( index_filename, std::fstream::in | std::fstream::binary );
+    id3_file.open( id3_filename, std::fstream::in );
+    mel_file.open( mel_filename, std::fstream::in | std::fstream::binary );
+    if( ! ( index_file.is_open() && id3_file.is_open() && mel_file.is_open() ) ) {
+        std::cout << "ERROR: Couldn't open some DB file for writing in " << directory << '\n';
+        return result;
+    }
+
+    while( index_file.good() && index_file.peek() != EOF ) {
+        int64_t mel_id;
+        // get id3 and and melody addresses
+        uint64_t id3_start = 0, id3_end = 0, mel_start = 0, mel_end = 0;
+        for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_start
+            char b = 0;
+            if( ! index_file.read( &b, 1 ).good() ) {
+                std::cout << "ERROR: in index file while reading id3_start\n";
+                break;
+            }
+            id3_start = ( id3_start << 8 ) + (unsigned char) b;
+        }
+        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_start
+            char b = 0;
+            if( ! index_file.read( &b, 1 ).good() ) {
+                std::cout << "ERROR: in index file while reading mel_start\n";
+                break;
+            }
+            mel_start = ( mel_start << 8 ) + (unsigned char) b;
+        }
+        for( int i = 0; i < id3_file_max_size_koeff; ++i ) { // id3_end
+            char b = 0;
+            if( ! index_file.read( &b, 1 ).good() ) {
+                std::cout << "ERROR: in index file while reading id3_end\n";
+                break;
+            }
+            id3_end = ( id3_end << 8 ) + (unsigned char) b;
+        }
+        for( int i = 0; i < mel_file_max_size_koeff; ++i ) { // mel_end
+            char b = 0;
+            if( ! index_file.read( &b, 1 ).good() ) {
+                std::cout << "ERROR: in index file while reading mel_end\n";
+                break;
+            }
+            mel_end = ( mel_end << 8 ) + (unsigned char) b;
+        }
+        // read id3 tags
+        assert( id3_start < id3_end );
+        assert( mel_start < mel_end );
+        std::string artist, album, name, year;
+        uint64_t record_size = id3_end - id3_start;
+        if( ! id3_file.seekg( id3_start ).good() ) {
+            std::cout << "ERROR: in id3 file\n";
+            break;
+        }
+        std::getline( id3_file, artist );
+        record_size -= id3_file.gcount();
+        std::getline( id3_file, album );
+        record_size -= id3_file.gcount();
+        std::getline( id3_file, name );
+        record_size -= id3_file.gcount();
+        std::getline( id3_file, year );
+        if( ! mel_file.seekg( mel_start ).good() ) {
+            std::cout << "ERROR: in mel file\n";
+            break;
+        }
+        std::vector< Raspoznavayka::interval_t > intervals( mel_end - mel_start );
+        for( uint64_t i = 0; i < mel_end - mel_start; ++i ) {
+            char interval;
+            if( mel_file.get( interval ).fail() ) {
+                std::cout << "ERROR: in mel file\n";
+                break;
+            }
+            intervals[i] = static_cast< Raspoznavayka::interval_t >( interval );
+        }
+        CIDTag idtag( artist, album, name, std::atoi( year.c_str() ) );
+        CInDBMelody new_melody( intervals, idtag );
+        result.push_back( new_melody );
+    } // end of found melodies' data read cycle
+
+    id3_file.close();
+    mel_file.close();
+    index_file.close();
+    return result;
+}
+    
 
 std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const {
     char filename_chars[] = "0123456789ABCDEF";

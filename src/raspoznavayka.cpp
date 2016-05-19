@@ -30,7 +30,7 @@ int the_mainest_main( int argc, char *argv[] ) {
             }
         }
         else if( args == "-s" ) { // sarch
-            if( argn < argc ) {
+            if( argn + 1 < argc ) {
                 std::string audio_file = std::string( argv[++argn] );
                 CInputAudio inputAudio = CInputAudio( audio_file );
                 auto samples = inputAudio.getSignal();
@@ -40,6 +40,32 @@ int the_mainest_main( int argc, char *argv[] ) {
                     CDataBase::getInstance().searchByHash( hash );
                 for( std::vector< CInDBMelody >::iterator i = db_search.begin();
                         i < db_search.end(); ++i ) {
+                    std::cout << "intervals: ";
+                    (*i).printIntervals();
+                    std::cout << (*i).getIDTag().artist << " - " 
+                              << (*i).getIDTag().title << " : "
+                              << Raspoznavayka::Math::getLevenshtein( 
+                                      rec_melody, (*i) ) 
+                              << '\n';
+                }
+            }
+            else {
+                std::cout << "No audio file name to add provided!\n";
+            }
+        }
+        else if( args == "-k" ) { // kostyl sarch
+            if( argn + 1 < argc ) {
+                std::string audio_file = std::string( argv[++argn] );
+                CInputAudio inputAudio = CInputAudio( audio_file );
+                auto samples = inputAudio.getSignal();
+                CRecordedMelody rec_melody( samples );
+                CHash hash ( rec_melody ); 
+                std::vector< CInDBMelody > db_search =
+                    CDataBase::getInstance().getEverything();
+                for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+                        i < db_search.end(); ++i ) {
+                    std::cout << "intervals: ";
+                    (*i).printIntervals();
                     std::cout << (*i).getIDTag().artist << " - " 
                               << (*i).getIDTag().title << " : "
                               << Raspoznavayka::Math::getLevenshtein( 

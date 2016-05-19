@@ -14,7 +14,7 @@ void CInputAudio::ReadAudioHelper( std::string fileDest ) {
               << " (" << wav.getBitsPerSample() << "b)" << std::endl;
     std::cout << "Wavefile parameters:\n";
     std::cout << "Length(ms): " << wav.getAudioLength() << std::endl;
-    std::cout << "Sample frequency: " << wav.getSampleFrequency() << " Hz";
+    std::cout << "Sample frequency: " << wav.getSampleFrequency() << " Hz" << std::endl;
 
     signal.resize( wav.getSamplesCount() );
     auto signalIterator = 0;
