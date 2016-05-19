@@ -164,3 +164,14 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
         intervals[ i ] = melody[ i + 1 ] - melody[ i ];
     }
 }
+
+void CMelody::printIntervals() {
+    std::vector< Raspoznavayka::interval_t > intervals = this->getIntervals();
+    for( std::vector< Raspoznavayka::interval_t >::iterator i = intervals.begin(); i < intervals.end(); ++i ) {
+        if( ( i - intervals.begin() ) % 8 == 0 )
+            std::cout << std::endl;
+        std::cout << *i << '\t';
+    }
+    std::cout << std::endl;
+}
+

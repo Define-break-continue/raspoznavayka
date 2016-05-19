@@ -14,6 +14,7 @@ class CMelody {
     CMelody( const std::vector< Raspoznavayka::interval_t >& intervals );
     const std::vector< Raspoznavayka::interval_t >& getIntervals() const;
     Raspoznavayka::mel_size_t getLength() const;
+    void printIntervals();
     
     protected:
     std::vector< Raspoznavayka::interval_t > intervals;
