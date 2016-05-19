@@ -149,11 +149,7 @@ void CMelody::setIntervals( std::vector< Aquila::SampleType >& waveform ) {
         auto loudestNotePoiner = std::max_element( notePower.begin(), notePower.end() );
         Raspoznavayka::note_t loudestNote = static_cast< Raspoznavayka::note_t >( std::distance( notePower.begin(), loudestNotePoiner ) );
         Raspoznavayka::dB_t loudestNoteLevel = notePower[ loudestNote ];
-std::cout<<loudestNote<<' '<<loudestNoteLevel<<'\n';
-std::cout<<"curr="<<(double)currentNoteLevel<<" loudest="<<(double)loudestNoteLevel<<std::endl;
-std::cout<<"curr-loudest="<< (currentNoteLevel >> loudestNoteLevel)<<std::endl;
         if( melody.empty() || ( loudestNoteLevel >> currentNoteLevel ) <= MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES && melody.at( melody.size() - 1 ) != loudestNote ) {
-std::cout<<"entered\n";
             melody.push_back( loudestNote );
             currentNoteLevel = loudestNoteLevel;
         }
