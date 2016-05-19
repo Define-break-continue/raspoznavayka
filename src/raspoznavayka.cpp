@@ -77,6 +77,42 @@ int the_mainest_main( int argc, char *argv[] ) {
                 std::cout << "No audio file name to add provided!\n";
             }
         }
+        else if( args == "-ms" ) { // microphone search
+            CInput micInput;
+            auto samples = micInput.RecordMelody();
+			CRecordedMelody rec_melody( samples );
+			CHash hash ( rec_melody ); 
+			std::vector< CInDBMelody > db_search =
+				CDataBase::getInstance().searchByHash( hash );
+			for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+					i < db_search.end(); ++i ) {
+				std::cout << "intervals: ";
+				(*i).printIntervals();
+				std::cout << (*i).getIDTag().artist << " - " 
+						  << (*i).getIDTag().title << " : "
+						  << Raspoznavayka::Math::getLevenshtein( 
+								  rec_melody, (*i) ) 
+						  << '\n';
+			}
+        }
+        else if( args == "-mk" ) { // microphone kostyl search
+            CInput micInput;
+            auto samples = micInput.RecordMelody();
+            CRecordedMelody rec_melody( samples );
+            CHash hash ( rec_melody ); 
+            std::vector< CInDBMelody > db_search =
+                CDataBase::getInstance().getEverything();
+            for( std::vector< CInDBMelody >::iterator i = db_search.begin();
+                    i < db_search.end(); ++i ) {
+                std::cout << "intervals: ";
+                (*i).printIntervals();
+                std::cout << (*i).getIDTag().artist << " - " 
+                          << (*i).getIDTag().title << " : "
+                          << Raspoznavayka::Math::getLevenshtein( 
+                                  rec_melody, (*i) ) 
+                          << '\n';
+            }
+        }
     }
     
     return 0;
@@ -95,6 +131,7 @@ int levenshtein_main() {
     std::vector< Raspoznavayka::interval_t > c( 0 );
     c.push_back( static_cast< Raspoznavayka::interval_t >( 3 ) );
     std::cout << Raspoznavayka::Math::levenshtein( a, b ) << std::endl;
+	return 0;
 }
 
 int cinputaudio_main() {

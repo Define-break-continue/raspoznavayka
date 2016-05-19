@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "lib/aquila/global.h"
 #include "lib/aquila/transform/FftFactory.h"
