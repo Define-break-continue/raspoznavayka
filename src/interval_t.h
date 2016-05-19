@@ -116,4 +116,20 @@ namespace Raspoznavayka {
         v[ 0 ] = 0;
         return v;
     }();
+
+    constexpr interval_t halftones_to_obertone[] = {
+        static_cast< interval_t >( 0 ),
+        static_cast< interval_t >( 12 ),
+        static_cast< interval_t >( 19 ),
+        static_cast< interval_t >( 24 ),
+        static_cast< interval_t >( 28 ),
+        static_cast< interval_t >( 31 ),
+        static_cast< interval_t >( 34 ),
+        static_cast< interval_t >( 36 )
+//        static_cast< interval_t >( 0 ),
+//        static_cast< interval_t >( 12 ),
+//        static_cast< interval_t >( 24 ),
+//        static_cast< interval_t >( 36 ),
+//        static_cast< interval_t >( 48 ),
+    };
 }

@@ -6,11 +6,13 @@
 #define __NIX__
 
 #define SAMPLE_RATE 11025
+#define NYQUIST_RATE SAMPLE_RATE / 2 + 1
 #define SAMPLES_PER_FRAME 2048
 #define SAMPLES_PER_OVERLAP 0
-#define LOWEST_NOTE Raspoznavayka::note_t::C
-#define HIGHEST_NOTE Raspoznavayka::note_t::b3
+#define LOWEST_NOTE Raspoznavayka::C
+#define HIGHEST_NOTE Raspoznavayka::b3
 #define LEVEL_ADDITION_N_OCTAVES 3 // > 0, n of octaves used in level addition for each note
+#define HIGHEST_OBERTONE HIGHEST_NOTE + 1 + Raspoznavayka::halftones_to_obertone[ LEVEL_ADDITION_N_OCTAVES ]
 #define HALFTONES_IN_AN_OCTAVE 12 // do not change
 #define MAXIMUM_DIFFERENCE_OF_LEVEL_OF_TWO_NEAREST_NOTES 3 // need to find the proper value
 
