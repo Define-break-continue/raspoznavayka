@@ -52,11 +52,11 @@ if [ ! -z ${del} ]; then
 fi
 [ ! -d build ] && mkdir build
 cd build/
-[ ! -d rtaudio ] && mkdir rtaudio
-cd rtaudio
-cmake ../../src/lib/rtaudio-4.1.2/ || exit 1
-make || exit 1
-cd ..
+#[ ! -d rtaudio ] && mkdir rtaudio
+#cd rtaudio
+#cmake ../../src/lib/rtaudio-4.1.2/ || exit 1
+#make || exit 1
+#cd ..
 cmake -DCMAKE_BUILD_TYPE=Debug ../src/ || exit 1
 make || exit 1
 if [ ! -z ${run} ]; then 
