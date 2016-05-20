@@ -226,7 +226,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
 std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
     std::vector< CHashMatch > result;
     std::ifstream hash_file;
-    std::vector< int64_t > matches; // vector of ... , mel_id, offset , ...
+    std::vector< std::pair< uint64_t, int64_t > > matches; // vector of pairs ( mel_id, offset )
 
     // hash offset cycle
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
@@ -245,16 +245,15 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
             int64_t total_offset = static_cast<int64_t>( mel_chm_offs ) - static_cast<int64_t>( fixed_hash_offset );
             // check distinct
             bool found = false;
-            for( std::vector< int64_t >::iterator i = matches.begin(); i != matches.end(); i += 2 ) {
-                if( (*i) == mel_id && *(i+1) == total_offset ) {
+            for( auto i = matches.begin(); i != matches.end(); ++i ) {
+                if( i->first == mel_id && i->second == total_offset ) {
                     found = true;
                     break;
                 }
             }
             if( !found ) {
                 // push to matches
-                matches.push_back( mel_id );
-                matches.push_back( total_offset );
+                matches.push_back( std::pair< uint64_t, int64_t >( mel_id, total_offset ) );
             }
         } // end of fixed hash file read cycle
 
@@ -273,8 +272,8 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
         return result;
     }
 
-    for( std::vector< int64_t >::iterator match = matches.begin(); match != matches.end(); match += 2 ) {
-        int64_t mel_id = *match, total_offset = *(match+1);
+    for( auto match = matches.begin(); match != matches.end(); ++match ) {
+        int64_t mel_id = match->first, total_offset = match->second;
         // get index entry on this song
         index_file.seekg( mel_id * ( mel_number_size_koeff + mel_file_max_size_koeff ) );
         // get id3 and and melody addresses
