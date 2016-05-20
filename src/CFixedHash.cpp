@@ -1,6 +1,6 @@
 #include "raspoznavayka.h"
 
-const int CFixedHash::length = __FixedHashLength__;
+const unsigned int CFixedHash::length = __FixedHashLength__;
 
 CFixedHash::CFixedHash( const CHash& hash, Raspoznavayka::mel_size_t offset ) {
     std::vector< Raspoznavayka::arrow_t > parent_arrows = hash.getHash();

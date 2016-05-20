@@ -126,7 +126,7 @@ bool CDataBase::addMelody( CInDBMelody melody ) const {
 std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
     std::vector< CInDBMelody > result;
     std::ifstream hash_file;
-    std::vector< int64_t > matches; // vector of mel_id
+    std::vector< uint64_t > matches; // vector of mel_id
 
     // hash offset cycle
     for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
@@ -154,10 +154,9 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
                 mel_chm_offs = ( mel_chm_offs << 8 ) + (unsigned char) b;
             }
             
-            int64_t total_offset = static_cast<int64_t>( mel_chm_offs ) - static_cast<int64_t>( fixed_hash_offset );
             // check distinct
             bool found = false;
-            for( std::vector< int64_t >::iterator i = matches.begin(); i != matches.end(); ++i ) {
+            for( std::vector< uint64_t >::iterator i = matches.begin(); i != matches.end(); ++i ) {
                 if( (*i) == mel_id ) {
                     found = true;
                     break;
@@ -184,7 +183,7 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
         return result;
     }
 
-    for( std::vector< int64_t >::iterator match = matches.begin(); match != matches.end(); ++match ) {
+    for( std::vector< uint64_t >::iterator match = matches.begin(); match != matches.end(); ++match ) {
         int64_t mel_id = *match;
         // get index entry on this song
         index_file.seekg( mel_id * ( mel_number_size_koeff + mel_file_max_size_koeff ) );
@@ -497,11 +496,11 @@ std::vector< CInDBMelody > CDataBase::getEverything() const {
 
 std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const {
     char filename_chars[] = "0123456789ABCDEF";
-    int filename_length =  ( CFixedHash::length + 3 ) / 4;
+    unsigned int filename_length =  ( CFixedHash::length + 3 ) / 4;
     char *res = new char[ filename_length + 1 ];
     res[ filename_length ] = 0;
     int pow = 1;
-    for( int a = 0; a < CFixedHash::length; ++a ) {
+    for( unsigned int a = 0; a < CFixedHash::length; ++a ) {
         if( a % 4 == 0 ) {
             pow = 1;
             res[ filename_length - a / 4 - 1 ] = 0;
@@ -512,8 +511,8 @@ std::string CDataBase::makeFilenameOfHash( const CFixedHash &fixed_hash ) const 
             res[ filename_length - a / 4 - 1 ] += pow;
         }
     }
-    for( int a = 0; a < filename_length; ++a ) {
-        res[a] = filename_chars[res[a]];
+    for( unsigned int a = 0; a < filename_length; ++a ) {
+        res[a] = filename_chars[ static_cast< unsigned char >( res[a] ) ];
     }
     std::string ress( res );
     delete res;
@@ -541,5 +540,6 @@ bool CDataBase::check_create_directory( const char* dir ) {
         assert( false );
         return false;
     }
+    return true;
 }
 
