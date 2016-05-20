@@ -11,6 +11,8 @@ private:
     CDataBase& operator=( const CDataBase &a ) = delete;
     std::string makeFilenameOfHash( const CFixedHash &fixed_hash ) const;
     bool check_create_directory( const char* );
+    template< typename num_type >
+        bool read_number_from_file( num_type &number, unsigned int bytes, std::ifstream &file ) const;
     std::string directory;
     std::string index_filename;
     std::string id3_filename;
