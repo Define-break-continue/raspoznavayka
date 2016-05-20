@@ -129,7 +129,17 @@ std::vector< CInDBMelody > CDataBase::searchByHash( CHash hash ) const {
     std::vector< uint64_t > matches; // vector of mel_id
 
     // hash offset cycle
-    for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
+    for( int64_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - static_cast< int64_t >( CFixedHash::length ); 
+            ++fixed_hash_offset ) {
+
+        CFixedHash fixed_hash( hash, fixed_hash_offset );
+        std::string hash_filename = makeFilenameOfHash( fixed_hash );
+        hash_file.open( makeFilenameOfHash( fixed_hash ),
+                        std::fstream::in | std::fstream::binary );
+        if( ! hash_file.is_open() ) {
+            std::cout << "ERROR: Couldn't open hash file for reading: " << hash_filename << '\n';
+            return result;
+        }
 
         // fixed hash file read cycle
         while( hash_file.is_open() && hash_file.good() && hash_file.peek() != EOF ) {
@@ -229,7 +239,18 @@ std::vector< CHashMatch > CDataBase::searchByHash_offs( CHash hash ) const {
     std::vector< std::pair< uint64_t, int64_t > > matches; // vector of pairs ( mel_id, offset )
 
     // hash offset cycle
-    for( Raspoznavayka::mel_size_t fixed_hash_offset = 0; fixed_hash_offset < hash.getLength() - CFixedHash::length; ++fixed_hash_offset ) {
+    for( int64_t fixed_hash_offset = 0; 
+            fixed_hash_offset < static_cast< int64_t >( hash.getLength() ) - static_cast< int64_t >( CFixedHash::length ); 
+            ++fixed_hash_offset ) {
+
+        CFixedHash fixed_hash( hash, fixed_hash_offset );
+        std::string hash_filename = makeFilenameOfHash( fixed_hash );
+        hash_file.open( makeFilenameOfHash( fixed_hash ),
+                        std::fstream::in | std::fstream::binary );
+        if( ! hash_file.is_open() ) {
+            std::cout << "ERROR: Couldn't open hash file for reading: " << hash_filename << '\n';
+            return result;
+        }
 
         // fixed hash file read cycle
         while( hash_file.is_open() && hash_file.good() && hash_file.peek() != EOF ) {
@@ -347,8 +368,6 @@ std::vector< CInDBMelody > CDataBase::getEverything() const {
         return result;
     }
     while( index_file.good() && index_file.peek() != EOF ) {
-		id3_end = 0;
-		mel_end = 0;
         // get id3 and and melody addresses
         if( ! ( read_number_from_file( id3_end, id3_file_max_size_koeff, index_file )
              && read_number_from_file( mel_end, mel_file_max_size_koeff, index_file )
