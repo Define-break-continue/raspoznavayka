@@ -6,7 +6,7 @@ project (${PROJECT})
 
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/../build)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wfatal-errors -D__LINUX_ALSA -lasound -lpthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wfatal-errors -D__LINUX_ALSA")
 #include_directories (
 #    ./
 #)
@@ -52,4 +52,4 @@ source_group ("Source Files" FILES ${SOURCES})
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
 #target_link_libraries (${PROJECT} aquila ooura)
-target_link_libraries (${PROJECT} aquila ooura rtaudio)
+target_link_libraries (${PROJECT} aquila ooura rtaudio pthread asound)
