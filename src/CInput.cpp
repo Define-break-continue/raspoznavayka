@@ -68,6 +68,9 @@ MY_TYPE* CInput::Decimation(MY_TYPE* recording, double time, int sampleRateOfRec
 
 std::vector<MY_TYPE> CInput::RecordMelody()
 {
+    std::vector<MY_TYPE> vec;
+    return vec;
+#if 0
 	unsigned int sampleRate, bufferFrames, /*device = 0,*/ offset = 0; 
 	unsigned int channels = 1; // Mono audio
 	double time = 10.0;
@@ -189,6 +192,7 @@ std::vector<MY_TYPE> CInput::RecordMelody()
 	if (data.buffer)	delete [] data.buffer;
 	std::cout << "Recording Successful. Proceeding...\n" << std::endl;
 	return interpolatedRecord;
+#endif
 }
 
 // Interleaved buffers

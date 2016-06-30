@@ -51,5 +51,5 @@ source_group ("Source Files" FILES ${SOURCES})
 
 add_executable (${PROJECT} ${HEADERS} ${SOURCES})
 
-#target_link_libraries (${PROJECT} aquila ooura)
-target_link_libraries (${PROJECT} aquila ooura rtaudio pthread asound)
+target_link_libraries (${PROJECT} aquila ooura)
+#target_link_libraries (${PROJECT} aquila ooura rtaudio pthread asound)
